@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  cntappointment:
+    build:
+      context: .  # Dirección del Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"  # Mapea el puerto 80 del contenedor al puerto 4200 de tu máquina local
+    volumes:
+      - .:/src
+      - /src/app/node_modules
+    container_name: cntappointment
