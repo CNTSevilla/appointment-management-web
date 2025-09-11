@@ -78,7 +78,7 @@ export class HistoryComponent {
     // 1. Guardar el token en el sessionStorage
     sessionStorage.setItem('token', response.token);
     // 2. Redirigir a la home
-    this.router.navigate(['/home']);
+    this.router.navigate(['/']);
   }
 
   onLoginError(error: any): void {

@@ -437,14 +437,14 @@
       </div>
     </section>
 
-    <app-button (click)="toggleForm()" class="z-[999] fixed left-1/2 bottom-10 -translate-x-1/4 w-1/4" [text]="'Añadir cita'" [type]="'submit'"
+    <app-button (click)="toggleForm()" class="z-[99] fixed left-1/2 bottom-10 -translate-x-1/4 w-1/4" [text]="'Añadir cita'" [type]="'submit'"
       [className]="'px-3 text-md font-semibold w-full py-[10px]'"></app-button>
   </section>
 </div>
 
 @if (isFormOpen){
 <!-- Overlay -->
-<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-100">
   <!-- Contenido del modal -->
   <section
     class="bg-white rounded-xl p-6 max-w-4xl w-[max-content] mx-4 translate-x-30 shadow-lg relative">

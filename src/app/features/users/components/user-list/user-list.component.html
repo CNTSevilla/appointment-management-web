@@ -13,10 +13,11 @@
       <section class="flex items-center justify-between">
         <app-title class="m-4" [className]="'font-sans self-center text-2xl font-semibold sm:text-3xl whitespace-nowrap'"
           [title]="'Usuarios (CNT)'"></app-title>
-        <app-link [url]="'/user/add'"
-          [text]="'Añadir usuario (CNT)'" [icon]="'user'"
-          [className]="'text-center font-semibold px-4 text-black bg-rose-500 text-white dark:hover:bg-rose-700 hover:text-white'">
-        </app-link>
+
+      <app-button (click)="toggleForm()"
+        class="w-xs"
+        [text]="'Añadir usuario (CNT)'" [type]="'submit'"
+        [className]="'px-3 text-md font-semibold w-full py-[10px]'"></app-button>
       </section>
       <div class="overflow-x-auto p-6 rounded-xl bg-white">
         <table class="min-w-full divide-y-2 divide-gray-200">
@@ -40,16 +41,33 @@
               <td class="px-3 py-2 whitespace-nowrap">000 000 000</td>
               <td class="px-3 py-2 whitespace-nowrap">16-02-2024</td>
               <td class="px-3 py-2 whitespace-nowrap">Admin</td>
-              <td class="px-3 py-2 whitespace-nowrap"><button type="button" data-target="dropdown-default"
-                class="dropdown-toggle inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600  ">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
-                  viewBox="0 0 12 4" fill="none">
-                  <path
-                    d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
-                    stroke="currentcolor" stroke-width="2.5" stroke-linecap="round"></path>
-                </svg>
+              <td class="px-3 py-2 whitespace-nowrap relative">
 
-              </button></td>
+                <button type="button" (click)="openDropdown(0)"
+                  data-target="dropdown-default"
+                class="dropdown-toggle inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600  ">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
+                    viewBox="0 0 12 4" fill="none">
+                    <path
+                      d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
+                      stroke="currentcolor" stroke-width="2.5" stroke-linecap="round"></path>
+                  </svg>
+                </button>
+                @if (dropdownOpen[0] === true) {
+                <ul role="none" class="py-3 bg-gray-50 dark:bg-gray-900 rounded-md shadow-md absolute top-10 right-2/3 dropdown-menu">
+                  <li>
+                    <div role="menuitem"
+                      class="block cursor-pointer mx-2 transition-all .2s ease rounded-md px-6 py-2 text-md text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                      ng-reflect-ng-class="[object Object]">Editar</div>
+                  </li>
+                  <li>
+                    <div role="menuitem"
+                      class="block cursor-pointer mx-2 transition-all .2s ease rounded-md px-6 py-2 text-md text-gray-700 hover:bg-rose-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-rose-700 dark:hover:text-white">
+                      Borrar</div>
+                  </li>
+                </ul>
+                }
+              </td>
             </tr>
 
             <tr class="*:text-gray-900 *:first:font-medium">
@@ -169,9 +187,9 @@
         <app-title class="m-4"
           [className]="'font-sans self-center text-2xl font-semibold sm:text-3xl whitespace-nowrap'"
           [title]="'Usuarios externos'"></app-title>
-        <app-link [url]="'/user/add'" [text]="'Añadir usuario externo'" [icon]="'user'"
-          [className]="'text-center font-semibold px-4 text-black bg-rose-500 text-white dark:hover:bg-rose-700 hover:text-white'">
-        </app-link>
+        <app-button (click)="toggleForm()" class="w-xs" [text]="'Añadir usuario externo'"
+          [type]="'submit'"
+          [className]="'px-3 text-md font-semibold w-full py-[10px]'"></app-button>
       </section>
       <div class="overflow-x-auto p-6 rounded-xl bg-white">
         <table class="min-w-full divide-y-2 divide-gray-200">

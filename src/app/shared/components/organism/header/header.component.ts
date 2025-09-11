@@ -29,7 +29,7 @@ export class HeaderComponent {
   menu = [
     {
       name: 'Inicio',
-      route: '/home',
+      route: '/',
       icon: 'house'
     },
     {

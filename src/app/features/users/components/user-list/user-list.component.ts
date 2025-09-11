@@ -8,10 +8,11 @@ import { ToastData } from '../../../../core/models/toast.model';
 import { Router } from '@angular/router';
 import { TruckElectric } from 'lucide-angular';
 import { LinkComponent } from '../../../../shared/components/atoms/link/link.component';
+import { ButtonComponent } from '../../../../shared/components/atoms/button/button.component';
 
 @Component({
   selector: 'app-user-list',
-  imports: [HeaderComponent, TitleComponent, DynamicFormComponent, LinkComponent],
+  imports: [HeaderComponent, TitleComponent, ButtonComponent, DynamicFormComponent],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss'
 })
@@ -24,24 +25,25 @@ export class UserListComponent {
   backButton = '';
   loginEndpoint = '/appointment';
   isLoading = false;
+  isFormOpen = false;
+  dropdownOpen: boolean[] = [true, false, false];
 
   loginFields: FormField[] = [
     {
       name: 'filter-text',
-      label: 'Nombre o correo',
+      label: 'Nombre, correo, telf...',
       type: 'text',
       placeholder: 'Buscar...',
       required: true,
     },
     {
       name: 'filter-role',
-      label: 'Rol',
+      label: 'Tabla',
       type: 'select',
       required: false,
       options: [
-        { value: 'HIGH', label: 'Alta' },
-        { value: 'LOW', label: 'Baja' },
-        { value: 'MEDIUM', label: 'Media' },
+        { value: 'CNT', label: 'Usuarios (CNT)' },
+        { value: 'External', label: 'Usuarios externos' },
       ],
     },
   ];
@@ -64,5 +66,13 @@ export class UserListComponent {
 
   setLoading(isLoading: boolean): void {
     this.isLoading = isLoading;
+  }
+
+  toggleForm(): void {
+    this.isFormOpen = !this.isFormOpen;
+  }
+
+  openDropdown(index: number): void {
+    this.dropdownOpen = this.dropdownOpen.map((_, i) => i === index ? !this.dropdownOpen[i] : false);
   }
 }
