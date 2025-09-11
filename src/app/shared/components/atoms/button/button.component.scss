@@ -1,24 +1,45 @@
 button.btn {
     overflow: hidden !important;
     position: relative;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
 }
 
 button.btn::after {
   content: "";
   position: absolute;
-  top: 50%;
-  right: -50%;
-  width: 50%;
-  height: calc(100% + 120px);
-  transform: rotate(58deg) translateY(32%) scale(2);
+  top: 0;
+  right: -45%;
+  width: 45%;
+  height: 100%;
   background: black;
-  opacity: 0;
+  opacity: 1;
   transition: all 0.5s ease;
   mix-blend-mode: multiply;
   z-index: 0;
 }
 
 button:hover::after {
-  right: -34%;
+  right: 0;
+  opacity: 1;
+}
+
+button.btn::before {
+  content: "";
+  position: absolute;
+  top: -100%;
+  display: block;
+  right: -15%;
+  width: 11%;
+  height: 100px;
+  transform: rotate(-45deg);
+  background: black;
+  opacity: 1;
+  transition: all 0.5s ease;
+  z-index: 1;
+}
+
+button:hover::before {
+  right: 42%;
   opacity: 1;
 }
