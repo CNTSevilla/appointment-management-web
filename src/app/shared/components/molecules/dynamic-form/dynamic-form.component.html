@@ -1,0 +1,52 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" [class]="className">
+  <div class="space-y-6">
+
+    <!-- Sección dinámica de campos -->
+    <div class="border-b border-gray-900/10 pb-12">
+      @if (titleForm && titleForm !== '') {
+        <h2 class="text-xl font-semibold text-gray-900">{{ titleForm }}</h2>
+      }
+
+      @if (subtitleForm && subtitleForm !== '') {
+        <p class="mt-1 text-lg text-gray-600">{{ subtitleForm }}</p>
+      }
+
+      <!-- Campos dinámicos -->
+
+      <article [ngClass]="isFilterForm ? 'flex items-end gap-6 flex-wrap' : ''" class="">
+        @for (field of fields; track field) {
+          <app-dynamic-input [field]="field" [form]="form"></app-dynamic-input>
+        }
+        @if (isFilterForm) {
+        <app-button class="relative w-1/4"
+          [text]="(submitButton && submitButton) === '' ? 'Enviar' : submitButton"
+          [type]="'submit'" [className]="'px-3 py-[5px] text-md font-semibold w-full'"
+          [disabled]="!form.valid"></app-button>
+        }
+      </article>
+
+    </div>
+
+    @if (!isFilterForm || isFilterForm === null) {
+      <!-- Botones -->
+      <div class="mt-2 flex items-center justify-end gap-x-2">
+        @if (backButton && backButton != '') {
+          <app-link [url]="'/'" [text]="(backButton && backButton) != '' ? backButton : 'Volver'" [className]="'transition-all .2s ease cursor-pointer text-md font-semibold text-gray-900'">
+          </app-link>
+          <app-button class="relative" [text]="(submitButton && submitButton) === '' ? 'Enviar' : submitButton" [type]="'submit'" [className]="'px-3 py-2 text-md font-semibold'"
+            [disabled]="!form.valid"></app-button>
+        } @else {
+          <app-button class="relative w-full"
+            [text]="(submitButton && submitButton) === '' ? 'Enviar' : submitButton"
+            [type]="'submit'" [className]="'px-3 py-2 text-md font-semibold w-full'"
+            [disabled]="!form.valid"></app-button>
+        }
+
+      </div>
+    }
+  </div>
+</form>
+
+<!-- Feedback -->
+<div *ngIf="response">✔️ {{ response | json }}</div>
+<div *ngIf="error">❌ {{ error.message || error | json }}</div>

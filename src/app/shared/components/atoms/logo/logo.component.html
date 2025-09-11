@@ -1,0 +1,13 @@
+<div>
+  @if (link) {
+  <a [href]="link" rel="noopener noreferrer">
+    <span class="sr-only">{{ alt }}</span>
+    <img class="w-auto bg-white rounded-full" [class]="className" [alt]="alt || 'Image description not available'"
+      [src]="url">
+  </a>
+  } @else {
+  <span class="sr-only">{{ alt }}</span>
+  <img class="w-auto bg-white rounded-full" [class]="className" [alt]="alt || 'Image description not available'"
+    [src]="url">
+  }
+</div>

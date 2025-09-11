@@ -1,0 +1,99 @@
+
+<div [formGroup]="form" class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+  <!-- Campo dinámico -->
+  <div class="sm:col-span-6">
+    @if (field.label != "" && field.type != null) {
+      <label [for]="field.name" class="block text-md font-medium text-gray-900">
+        {{ field.label }} @if (field.required){ <span class="text-red-500">*</span> }
+      </label>
+    }
+
+    <div class="mt-2">
+      <!-- Tipos simples de input -->
+      @if (['text','email','password','number','date','datetime-local','time'].includes(field.type)) {
+        <input [type]="field.type"
+                [id]="field.name"
+                [formControlName]="field.name"
+                [placeholder]="field.placeholder"
+                [minLength]="field.min  || 0"
+                [maxLength]="field.max || 10000"
+                [step]="field.step"
+                class="transition-all .2s ease includes w-full rounded-md bg-white px-4 py-2 text-md text-gray-900 outline-2 -outline-offset-2 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-md/6" />
+      }
+
+      <!-- Textarea -->
+      @if (field.type === 'textarea') {
+        <textarea rows="3"
+                  [id]="field.name"
+                  [formControlName]="field.name"
+                  [placeholder]="field.placeholder"
+                  class="transition-all .2s ease block w-full rounded-md bg-white px-4 py-2 text-md text-gray-900 outline-2 -outline-offset-2 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-md/6">
+        </textarea>
+      }
+
+      <!-- Select -->
+      @if (field.type === 'select') {
+        <select [id]="field.name"
+                [formControlName]="field.name"
+                [multiple]="field.multiple"
+                class="transition-all .2s ease block w-full rounded-md bg-white px-4 py-2 text-md text-gray-900 outline-2 -outline-offset-2 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-md/6">
+          @for (option of field.options; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      }
+
+      <!-- Checkbox -->
+      @if (field.type === 'checkbox') {
+        <div class="flex items-center gap-x-2">
+          <input type="checkbox"
+                  [id]="field.name"
+                  [formControlName]="field.name"
+                  class="cursor-pointer h-5 w-5 accent-rose-600 transition-all .2s ease rounded-sm border border-gray-300 text-rose-600 focus:ring-rose-600" />
+          <label [for]="field.name" class="text-[15px] text-gray-700 cursor-pointer">{{ field.label }}</label>
+        </div>
+      }
+
+      <!-- Radio -->
+      @if (field.type === 'radio') {
+        <div class="space-y-2">
+          @for (option of field.options; track option.value) {
+            <div class="flex items-center gap-x-2">
+              <input type="radio"
+                      [name]="field.name"
+                      [value]="option.value"
+                      [formControlName]="field.name"
+                      [id]="field.name + '_' + option.value"
+                      class="cursor-pointer h-5 w-5 accent-rose-600 transition-all .2s ease h-4 w-4 text-rose-600 border-gray-300 focus:ring-rose-600" />
+              <label [for]="field.name + '_' + option.value" class="cursor-pointer text-[15px] text-gray-700">
+                {{ option.label }}
+              </label>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- File -->
+      @if (field.type === 'file') {
+        <input type="file"
+                [id]="field.name"
+                [formControlName]="field.name"
+                [multiple]="field.multiple"
+                class="cursor-pointer transition-all .2s ease block w-full text-md text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-md file:font-semibold file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100" />
+      }
+
+      <!-- Mensaje de error -->
+      @if (form.get(field.name)?.invalid && form.get(field.name)?.touched) {
+        <div class="text-red-600 mt-1 text-md transition-all .2s ease">
+          <!-- #AÑADIR ICONOS PARA ERROR Y AÑADIR MENSAJE DE INFORMACIÓN DEBAJO DEL CAMPO -->
+          <span *ngIf="form.get(field.name)?.errors?.['required']">Este campo es obligatorio.</span>
+          <span *ngIf="form.get(field.name)?.errors?.['email']">Correo no válido.</span>
+          <span *ngIf="form.get(field.name)?.errors?.['minlength']">Debe contener al menos {{ field.min }} caracteres</span>
+          <span *ngIf="form.get(field.name)?.errors?.['maxlength']">No puede contener más de {{ field.max }} caracteres</span>
+        </div>
+      }
+    </div>
+  </div>
+
+</div>
+

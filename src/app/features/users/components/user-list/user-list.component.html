@@ -1,0 +1,294 @@
+<app-header></app-header>
+<div class="mt-[72px] ml-[256px]">
+  <app-dynamic-form [titleForm]="'Filtrar usuarios'"
+    [subtitleForm]="'Rellena los campos para filtrar los usuarios'"
+    [fields]="loginFields" [className]="'w-full px-24 py-12 bg-gray-50'" [endpointUrl]="loginEndpoint"
+    [method]="'POST'" [backButton]="backButton" [submitButton]="loginButton" [isFilterForm]="true"
+    (submitSuccess)="onLoginSuccess($event)" (submitError)="onLoginError($event)"
+    (loading)="setLoading($event)">></app-dynamic-form>
+
+  <section class="relative bg-gray-50">
+    <div class="w-full px-24 py-6 relative z-10 backdrop-blur-3xl">
+      <section class="flex items-center justify-between">
+        <app-title class="m-4" [className]="'font-sans self-center text-2xl font-semibold sm:text-3xl whitespace-nowrap'"
+          [title]="'Usuarios (CNT)'"></app-title>
+        <app-link [url]="'/user/add'"
+          [text]="'Añadir usuario (CNT)'" [icon]="'user'"
+          [className]="'text-center font-semibold px-4 text-black bg-rose-500 text-white dark:hover:bg-rose-700 hover:text-white'">
+        </app-link>
+      </section>
+      <div class="overflow-x-auto p-6 rounded-xl bg-white">
+        <table class="min-w-full divide-y-2 divide-gray-200">
+          <thead class="ltr:text-left rtl:text-right">
+            <tr class="*:font-medium *:text-gray-900">
+              <th class="px-3 py-2 whitespace-nowrap">Nombre</th>
+              <th class="px-3 py-2 whitespace-nowrap">Email</th>
+              <th class="px-3 py-2 whitespace-nowrap">Nombre de usuario</th>
+              <th class="px-3 py-2 whitespace-nowrap">Teléfono</th>
+              <th class="px-3 py-2 whitespace-nowrap">Fecha de creación</th>
+              <th class="px-3 py-2 whitespace-nowrap">Rol</th>
+              <th class="px-3 py-2 whitespace-nowrap">Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-gray-200">
+            <tr class="*:text-gray-900 *:first:font-medium">
+              <td class="px-3 py-2 whitespace-nowrap">Jesús</td>
+              <td class="px-3 py-2 whitespace-nowrap">jesus&#64;gmail.com</td>
+              <td class="px-3 py-2 whitespace-nowrap">jdaza</td>
+              <td class="px-3 py-2 whitespace-nowrap">000 000 000</td>
+              <td class="px-3 py-2 whitespace-nowrap">16-02-2024</td>
+              <td class="px-3 py-2 whitespace-nowrap">Admin</td>
+              <td class="px-3 py-2 whitespace-nowrap"><button type="button" data-target="dropdown-default"
+                class="dropdown-toggle inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600  ">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
+                  viewBox="0 0 12 4" fill="none">
+                  <path
+                    d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
+                    stroke="currentcolor" stroke-width="2.5" stroke-linecap="round"></path>
+                </svg>
+
+              </button></td>
+            </tr>
+
+            <tr class="*:text-gray-900 *:first:font-medium">
+              <td class="px-3 py-2 whitespace-nowrap">Jesús</td>
+              <td class="px-3 py-2 whitespace-nowrap">jesus&#64;gmail.com</td>
+              <td class="px-3 py-2 whitespace-nowrap">jdaza</td>
+              <td class="px-3 py-2 whitespace-nowrap">000 000 000</td>
+              <td class="px-3 py-2 whitespace-nowrap">16-02-2024</td>
+              <td class="px-3 py-2 whitespace-nowrap">Admin</td>
+              <td class="px-3 py-2 whitespace-nowrap"><button type="button"
+                  data-target="dropdown-default"
+                  class="dropdown-toggle inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600  ">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
+                    viewBox="0 0 12 4" fill="none">
+                    <path
+                      d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
+                      stroke="currentcolor" stroke-width="2.5" stroke-linecap="round">
+                    </path>
+                  </svg>
+
+                </button></td>
+            </tr>
+            <tr class="*:text-gray-900 *:first:font-medium">
+              <td class="px-3 py-2 whitespace-nowrap">Jesús</td>
+              <td class="px-3 py-2 whitespace-nowrap">jesus&#64;gmail.com</td>
+              <td class="px-3 py-2 whitespace-nowrap">jdaza</td>
+              <td class="px-3 py-2 whitespace-nowrap">000 000 000</td>
+              <td class="px-3 py-2 whitespace-nowrap">16-02-2024</td>
+              <td class="px-3 py-2 whitespace-nowrap">Admin</td>
+              <td class="px-3 py-2 whitespace-nowrap"><button type="button"
+                  data-target="dropdown-default"
+                  class="dropdown-toggle inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600  ">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
+                    viewBox="0 0 12 4" fill="none">
+                    <path
+                      d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
+                      stroke="currentcolor" stroke-width="2.5" stroke-linecap="round">
+                    </path>
+                  </svg>
+
+                </button></td>
+            </tr>
+            <tr class="*:text-gray-900 *:first:font-medium">
+              <td class="px-3 py-2 whitespace-nowrap">Jesús</td>
+              <td class="px-3 py-2 whitespace-nowrap">jesus&#64;gmail.com</td>
+              <td class="px-3 py-2 whitespace-nowrap">jdaza</td>
+              <td class="px-3 py-2 whitespace-nowrap">000 000 000</td>
+              <td class="px-3 py-2 whitespace-nowrap">16-02-2024</td>
+              <td class="px-3 py-2 whitespace-nowrap">Admin</td>
+              <td class="px-3 py-2 whitespace-nowrap"><button type="button"
+                  data-target="dropdown-default"
+                  class="dropdown-toggle inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600  ">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
+                    viewBox="0 0 12 4" fill="none">
+                    <path
+                      d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
+                      stroke="currentcolor" stroke-width="2.5" stroke-linecap="round">
+                    </path>
+                  </svg>
+
+                </button></td>
+            </tr>
+            <tr class="*:text-gray-900 *:first:font-medium">
+              <td class="px-3 py-2 whitespace-nowrap">Jesús</td>
+              <td class="px-3 py-2 whitespace-nowrap">jesus&#64;gmail.com</td>
+              <td class="px-3 py-2 whitespace-nowrap">jdaza</td>
+              <td class="px-3 py-2 whitespace-nowrap">000 000 000</td>
+              <td class="px-3 py-2 whitespace-nowrap">16-02-2024</td>
+              <td class="px-3 py-2 whitespace-nowrap">Admin</td>
+              <td class="px-3 py-2 whitespace-nowrap"><button type="button"
+                  data-target="dropdown-default"
+                  class="dropdown-toggle inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600  ">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
+                    viewBox="0 0 12 4" fill="none">
+                    <path
+                      d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
+                      stroke="currentcolor" stroke-width="2.5" stroke-linecap="round">
+                    </path>
+                  </svg>
+
+                </button></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <ul class="flex justify-center gap-3 text-gray-900 w-[max-content] mt-5">
+              <li>
+                <a href="#"
+                  class="grid size-8 place-content-center rounded border border-gray-200 transition-colors hover:bg-gray-50 rtl:rotate-180"
+                  aria-label="Previous page">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-4"
+                    viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                      clip-rule="evenodd" />
+                  </svg>
+                </a>
+              </li>
+
+              <li class="text-sm/8 font-medium tracking-widest">2/12</li>
+
+              <li>
+                <a href="#"
+                  class="grid size-8 place-content-center rounded border border-gray-200 transition-colors hover:bg-gray-50 rtl:rotate-180"
+                  aria-label="Next page">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-4"
+                    viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                      clip-rule="evenodd" />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </tfoot>
+        </table>
+      </div>
+
+      <section class="flex items-center justify-between mt-10">
+        <app-title class="m-4"
+          [className]="'font-sans self-center text-2xl font-semibold sm:text-3xl whitespace-nowrap'"
+          [title]="'Usuarios externos'"></app-title>
+        <app-link [url]="'/user/add'" [text]="'Añadir usuario externo'" [icon]="'user'"
+          [className]="'text-center font-semibold px-4 text-black bg-rose-500 text-white dark:hover:bg-rose-700 hover:text-white'">
+        </app-link>
+      </section>
+      <div class="overflow-x-auto p-6 rounded-xl bg-white">
+        <table class="min-w-full divide-y-2 divide-gray-200">
+          <thead class="ltr:text-left rtl:text-right">
+            <tr class="*:font-medium *:text-gray-900">
+              <th class="px-3 py-2 whitespace-nowrap">Nombre</th>
+              <th class="px-3 py-2 whitespace-nowrap">Email</th>
+              <th class="px-3 py-2 whitespace-nowrap">Teléfono</th>
+              <th class="px-3 py-2 whitespace-nowrap">Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody class="divide-y divide-gray-200">
+            <tr class="*:text-gray-900 *:first:font-medium">
+              <td class="px-3 py-2 whitespace-nowrap">Jesús</td>
+              <td class="px-3 py-2 whitespace-nowrap">jesus&#64;gmail.com</td>
+              <td class="px-3 py-2 whitespace-nowrap">000 000 000</td>
+              <td class="px-3 py-2 whitespace-nowrap"><button type="button"
+                  data-target="dropdown-default"
+                  class="dropdown-toggle inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600  ">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
+                    viewBox="0 0 12 4" fill="none">
+                    <path
+                      d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
+                      stroke="currentcolor" stroke-width="2.5" stroke-linecap="round">
+                    </path>
+                  </svg>
+
+                </button></td>
+            </tr>
+            <tr class="*:text-gray-900 *:first:font-medium">
+              <td class="px-3 py-2 whitespace-nowrap">Jesús</td>
+              <td class="px-3 py-2 whitespace-nowrap">jesus&#64;gmail.com</td>
+              <td class="px-3 py-2 whitespace-nowrap">000 000 000</td>
+              <td class="px-3 py-2 whitespace-nowrap"><button type="button"
+                  data-target="dropdown-default"
+                  class="dropdown-toggle inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600  ">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
+                    viewBox="0 0 12 4" fill="none">
+                    <path
+                      d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
+                      stroke="currentcolor" stroke-width="2.5" stroke-linecap="round">
+                    </path>
+                  </svg>
+
+                </button></td>
+            </tr>
+            <tr class="*:text-gray-900 *:first:font-medium">
+              <td class="px-3 py-2 whitespace-nowrap">Jesús</td>
+              <td class="px-3 py-2 whitespace-nowrap">jesus&#64;gmail.com</td>
+              <td class="px-3 py-2 whitespace-nowrap">000 000 000</td>
+              <td class="px-3 py-2 whitespace-nowrap"><button type="button"
+                  data-target="dropdown-default"
+                  class="dropdown-toggle inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600  ">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
+                    viewBox="0 0 12 4" fill="none">
+                    <path
+                      d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
+                      stroke="currentcolor" stroke-width="2.5" stroke-linecap="round">
+                    </path>
+                  </svg>
+
+                </button></td>
+            </tr>
+            <tr class="*:text-gray-900 *:first:font-medium">
+              <td class="px-3 py-2 whitespace-nowrap">Jesús</td>
+              <td class="px-3 py-2 whitespace-nowrap">jesus&#64;gmail.com</td>
+              <td class="px-3 py-2 whitespace-nowrap">000 000 000</td>
+              <td class="px-3 py-2 whitespace-nowrap"><button type="button"
+                  data-target="dropdown-default"
+                  class="dropdown-toggle inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600  ">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
+                    viewBox="0 0 12 4" fill="none">
+                    <path
+                      d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
+                      stroke="currentcolor" stroke-width="2.5" stroke-linecap="round">
+                    </path>
+                  </svg>
+
+                </button></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <ul class="flex justify-center gap-3 text-gray-900 w-[max-content] mt-5">
+              <li>
+                <a href="#"
+                  class="grid size-8 place-content-center rounded border border-gray-200 transition-colors hover:bg-gray-50 rtl:rotate-180"
+                  aria-label="Previous page">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                      clip-rule="evenodd" />
+                  </svg>
+                </a>
+              </li>
+
+              <li class="text-sm/8 font-medium tracking-widest">2/12</li>
+
+              <li>
+                <a href="#"
+                  class="grid size-8 place-content-center rounded border border-gray-200 transition-colors hover:bg-gray-50 rtl:rotate-180"
+                  aria-label="Next page">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                      clip-rule="evenodd" />
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>
+
