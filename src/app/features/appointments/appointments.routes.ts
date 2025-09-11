@@ -6,7 +6,7 @@ import { AppointmentComponent } from './components/appointment/appointment.compo
 
 export const APPOINTMENTS_ROUTES: Routes = [
   {
-    path: 'home',
+    path: '',
     component: HomeComponent
   },
   {
@@ -16,5 +16,5 @@ export const APPOINTMENTS_ROUTES: Routes = [
   {
     path: 'appointments',
     component: AppointmentComponent
-  }
+  },
 ];
