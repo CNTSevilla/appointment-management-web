@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 export class DynamicInputComponent {
   @Input() field!: FormField;
   @Input() form!: FormGroup;
+  @Input() isFilterForm: boolean = false;
 
   get control() {
     return this.form.get(this.field.name);

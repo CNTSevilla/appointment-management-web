@@ -83,7 +83,7 @@
       }
 
       <!-- Mensaje de error -->
-      @if (form.get(field.name)?.invalid && form.get(field.name)?.touched) {
+      @if (form.get(field.name)?.invalid && form.get(field.name)?.touched && !isFilterForm) {
         <div class="text-red-600 mt-1 text-md transition-all .2s ease">
           <!-- #AÑADIR ICONOS PARA ERROR Y AÑADIR MENSAJE DE INFORMACIÓN DEBAJO DEL CAMPO -->
           <span *ngIf="form.get(field.name)?.errors?.['required']">Este campo es obligatorio.</span>

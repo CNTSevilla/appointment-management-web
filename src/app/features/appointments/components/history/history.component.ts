@@ -22,8 +22,6 @@ export class HistoryComponent {
       label: 'Título',
       type: 'text',
       required: true,
-      min: 6,
-      max: 50,
       placeholder: 'Cita de Juan'
     },
     {
