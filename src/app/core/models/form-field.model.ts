@@ -10,6 +10,7 @@ export type FieldType =
   | 'date'
   | 'datetime-local'
   | 'time'
+  | 'tel'
   | 'file';
 
 export interface FormField {
