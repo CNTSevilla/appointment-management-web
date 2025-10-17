@@ -431,16 +431,16 @@
 <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
   <!-- Contenido del modal -->
   <section
-    class="bg-white rounded-xl p-6 max-w-4xl w-[max-content] mx-4 shadow-lg relative">
+    class="bg-white rounded-xl p-6 max-w-4xl w-[max-content] mx-4 shadow-lg relative max-h-[90vh] overflow-y-auto overflow-x-hidden">
     <app-icon (click)="toggleForm()" [icon]="'x'" [className]="'absolute right-2 top-2 cursor-pointer w-5 h-5'"></app-icon>
     <div class="flex items-center justify-between mb-5 w-[max-content]">
       <app-dynamic-form [titleForm]="'Añadir nueva cita'"
         [subtitleForm]="'Rellena los datos para añadir una nueva cita'"
-        [fields]="loginFields" [className]="'w-full'"
-        [endpointUrl]="loginEndpoint" [method]="'POST'"
-        [backButton]="backButton" [submitButton]="loginButton"
-        (submitSuccess)="onLoginSuccess($event)"
-        (submitError)="onLoginError($event)" (loading)="setLoading($event)">
+        [fields]="appointmentsFields" [className]="'w-full'"
+        [endpointUrl]="appointmentEndpoint" [method]="'POST'"
+        [backButton]="backButton" [submitButton]="addButton"
+        (submitSuccess)="onSubmitSuccess($event)"
+        (submitError)="onSubmitError($event)" (loading)="setLoading($event)">
       </app-dynamic-form>
     </div>
 
@@ -450,4 +450,9 @@
 
 @if (isLoading){
 <app-loader class="transition-all .3s ease"></app-loader>
+}
+@if (toastData != null) {
+<app-toast [type]="toastData.type" (closeToast)="closeToast()"
+  [text]="toastData.text" [duration]="toastData.duration"
+  [className]="'transition-all .3s ease'"></app-toast>
 }

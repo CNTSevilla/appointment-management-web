@@ -25,21 +25,21 @@ button:hover::after {
 }
 
 button.btn::before {
-  content: "";
-  position: absolute;
-  top: -100%;
-  display: block;
-  right: -15%;
-  width: 11%;
-  height: 100px;
-  transform: rotate(-45deg);
-  background: black;
-  opacity: 1;
-  transition: all 0.5s ease;
-  z-index: 1;
+    content: "";
+    position: absolute;
+    top: -76%;
+    display: block;
+    right: -25%;
+    width: 13%;
+    height: 100px;
+    transform: rotate(45deg);
+    background: black;
+    opacity: 1;
+    transition: all 0.5s ease;
+    z-index: 1;
 }
 
 button:hover::before {
-  right: 42%;
+  right: 35%;
   opacity: 1;
 }

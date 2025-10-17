@@ -17,7 +17,7 @@ import { RequestService } from '../../../../core/services/request.service';
 export class DynamicFormComponent implements OnInit {
   @Input() fields: FormField[] = [];
   @Input() endpointUrl: string = '';
-  @Input() method: 'POST' | 'PUT' = 'POST';
+  @Input() method: 'GET' | 'POST' | 'PUT' = 'POST';
   @Input() submitButton: string = '';
   @Input() backButton: string = '';
   @Input() className: string = '';
@@ -43,6 +43,11 @@ export class DynamicFormComponent implements OnInit {
         // Requerido
         if (field.required) {
           validators.push(Validators.required);
+        }
+
+        // Phone
+        if (field.type === 'tel') {
+          validators.push(Validators.pattern('^(\\+?\\d{2})?\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}$'));
         }
 
         // Email

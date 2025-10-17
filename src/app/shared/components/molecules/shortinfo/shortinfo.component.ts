@@ -9,7 +9,7 @@ import { Component, Input } from '@angular/core';
 })
 export class ShortinfoComponent {
   @Input() name: string = 'John Doe';
-  @Input() email: string = 'jhondoe@gmail.com';
+  @Input() roles: string = 'USER';
   @Input() className: string = '';
 
 }

@@ -10,7 +10,7 @@
 
     <div class="mt-2">
       <!-- Tipos simples de input -->
-      @if (['text','email','password','number','date','datetime-local','time'].includes(field.type)) {
+      @if (['text','email','password','number','date','datetime-local','time', 'tel'].includes(field.type)) {
         <input [type]="field.type"
                 [id]="field.name"
                 [formControlName]="field.name"
@@ -90,6 +90,9 @@
           <span *ngIf="form.get(field.name)?.errors?.['email']">Correo no válido.</span>
           <span *ngIf="form.get(field.name)?.errors?.['minlength']">Debe contener al menos {{ field.min }} caracteres</span>
           <span *ngIf="form.get(field.name)?.errors?.['maxlength']">No puede contener más de {{ field.max }} caracteres</span>
+          <span *ngIf="form.get(field.name)?.errors?.['pattern'] && field.type === 'tel'">
+            Número no válido. Usa un formato como +34 600 123 456
+          </span>
         </div>
       }
     </div>

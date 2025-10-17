@@ -11,7 +11,7 @@ import { IconComponent } from '../../atoms/icon/icon.component';
 
 @Component({
   selector: 'app-calendar',
-  imports: [ButtonComponent, DynamicFormComponent, LoaderComponent, IconComponent],
+  imports: [ButtonComponent, DynamicFormComponent, LoaderComponent, IconComponent, ToastComponent],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss'
 })
@@ -20,23 +20,23 @@ export class CalendarComponent {
   constructor(private router: Router) {}
 
   toastData: ToastData | null = null;
-  loginButton = 'Añadir cita';
+  addButton = 'Añadir cita';
   backButton = '';
-  loginEndpoint = '/appointment';
+  appointmentEndpoint = '/appointment';
   isLoading = false;
   isFormOpen = false;
-  loginFields: FormField[] = [
+  appointmentsFields: FormField[] = [
     {
       name: 'date_time',
       label: 'Fecha y hora',
       type: 'datetime-local',
-      required: false,
+      required: true,
     },
     {
       name: 'priority',
       label: 'Prioridad',
       type: 'select',
-      required: false,
+      required: true,
       options: [
         { value: 'HIGH', label: 'Alta' },
         { value: 'LOW', label: 'Baja' },
@@ -47,7 +47,7 @@ export class CalendarComponent {
       name: 'status',
       label: 'Estado',
       type: 'select',
-      required: false,
+      required: true,
       options: [
         { value: 'ACTIVE', label: 'Activo' },
         { value: 'ARCHIVED', label: 'Archivado' },
@@ -79,18 +79,21 @@ export class CalendarComponent {
         { value: 'DEFERRED', label: 'Persona4' },
       ],
     },
+    {
+      name: 'comment',
+      label: 'Comentario inicial',
+      type: 'textarea',
+      required: false,
+      placeholder: 'Escribe un comentario...'
+    },
   ];
 
 
-  onLoginSuccess(response: LoginResponse): void {
-    console.log('Login exitoso:', response);
-    // 1. Guardar el token en el sessionStorage
-    sessionStorage.setItem('token', response.token);
-    // 2. Redirigir a la home
-    this.router.navigate(['/']);
+  onSubmitSuccess(response: LoginResponse): void {
+    console.log('Submit exitoso:', response);
   }
 
-  onLoginError(error: any): void {
+  onSubmitError(error: any): void {
     console.error('Error en el login:', error);
     // 1. Mostrar un mensaje de error al usuario
     this.toastData = { type: 'error', text: 'Error en el inicio de sesión. Por favor, inténtelo de nuevo.', duration: 5000 };
@@ -103,5 +106,9 @@ export class CalendarComponent {
 
   setLoading(isLoading: boolean): void {
     this.isLoading = isLoading;
+  }
+
+  closeToast(): void {
+    this.toastData = null;
   }
 }
