@@ -3,10 +3,10 @@
     <section class="relative bg-gray-50">
       <app-dynamic-form [titleForm]="'Filtrar historial'"
         [subtitleForm]="'Rellena los campos para buscar en el historial de citas'"
-        [fields]="loginFields" [className]="'w-full px-24 py-12 bg-gray-50'"
-        [endpointUrl]="loginEndpoint" [method]="'POST'" [backButton]="backButton" [isFilterForm]="true"
-        [submitButton]="loginButton" (submitSuccess)="onLoginSuccess($event)"
-        (submitError)="onLoginError($event)"></app-dynamic-form>
+        [fields]="historyFields" [className]="'w-full px-24 py-12 bg-gray-50'"
+        [endpointUrl]="historyEndpoint" [method]="'POST'" [backButton]="backButton" [isFilterForm]="true"
+        [submitButton]="historyButton" (submitSuccess)="onSubmitSuccess($event)"
+        (submitError)="onSubmitError($event)"></app-dynamic-form>
 
       <app-title class=""
         [className]="'font-sans pl-24 self-center text-2xl font-semibold sm:text-3xl whitespace-nowrap'"

@@ -16,7 +16,7 @@ import { TitleComponent } from '../../../../shared/components/atoms/title/title.
 export class HistoryComponent {
   constructor(private router: Router ) {}
 
-  loginFields: FormField[] = [
+  historyFields: FormField[] = [
     {
       name: 'title',
       label: 'Título',
@@ -32,16 +32,6 @@ export class HistoryComponent {
         { value: 'es', label: 'Alta' },
         { value: 'mx', label: 'Media' },
         { value: 'ar', label: 'Baja' }
-      ]
-    },
-    {
-      name: 'status',
-      label: 'Estado',
-      type: 'select',
-      options: [
-        { value: 'es', label: 'Completado' },
-        { value: 'mx', label: 'En proceso' },
-        { value: 'ar', label: 'Por hacer' }
       ]
     },
     {
@@ -66,21 +56,16 @@ export class HistoryComponent {
     },
   ];
   toastData: ToastData | null = null;
-  loginButton = 'Filtrar';
+  historyButton = 'Filtrar';
   backButton = '';
-  loginEndpoint = '/authentication/sign-in';
+  historyEndpoint = '/appointment/all';
   isLoading = false;
 
-  onLoginSuccess(response: LoginResponse): void {
+  onSubmitSuccess(response: LoginResponse): void {
     console.log('Login exitoso:', response);
-    // 1. Guardar el token en el sessionStorage
-    sessionStorage.setItem('token', response.token);
-    // 2. Redirigir a la home
-    this.router.navigate(['/']);
   }
 
-  onLoginError(error: any): void {
-    console.error('Error en el login:', error);
+  onSubmitError(error: any): void {
     // 1. Mostrar un mensaje de error al usuario
     this.toastData = { type: 'error', text: 'Error en el inicio de sesión. Por favor, inténtelo de nuevo.', duration: 5000 };
 

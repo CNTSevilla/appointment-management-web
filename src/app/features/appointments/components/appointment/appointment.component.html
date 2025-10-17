@@ -3,10 +3,10 @@
   <section class="relative bg-gray-50 pb-18">
       <app-dynamic-form [titleForm]="'Filtrar citas'"
         [subtitleForm]="'Rellena los campos para filtrar las citas'"
-        [fields]="loginFields" [className]="'w-full px-24 py-12 bg-gray-50'"
-        [endpointUrl]="loginEndpoint" [method]="'POST'" [backButton]="backButton" [isFilterForm]="true"
-        [submitButton]="loginButton" (submitSuccess)="onLoginSuccess($event)"
-        (submitError)="onLoginError($event)"
+        [fields]="filterFields" [className]="'w-full px-24 py-12 bg-gray-50'"
+        [endpointUrl]="appointmentEndpoint" [method]="'POST'" [backButton]="''" [isFilterForm]="true"
+        [submitButton]="addButton" (submitSuccess)="onSubmitSuccess($event)"
+        (submitError)="onSubmitError($event)"
         ></app-dynamic-form>
 
     <app-title class=""
@@ -443,24 +443,24 @@
 </div>
 
 @if (isFormOpen){
-<!-- Overlay -->
-<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-100">
-  <!-- Contenido del modal -->
-  <section
-    class="bg-white rounded-xl p-6 max-w-4xl w-[max-content] mx-4 translate-x-30 shadow-lg relative">
-    <app-icon (click)="toggleForm()" [icon]="'x'"
-      [className]="'absolute right-2 top-2 cursor-pointer w-5 h-5'"></app-icon>
-    <div class="flex items-center justify-between mb-5 w-[max-content]">
-      <app-dynamic-form [titleForm]="'Añadir nueva cita'"
-        [subtitleForm]="'Rellena los datos para añadir una nueva cita'"
-        [fields]="addAppointment" [className]="'w-full'"
-        [endpointUrl]="loginEndpoint" [method]="'POST'"
-        [backButton]="backButton" [submitButton]="loginButton"
-        (submitSuccess)="onLoginSuccess($event)"
-        (submitError)="onLoginError($event)">
-      </app-dynamic-form>
-    </div>
+  <!-- Overlay -->
+  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-100">
+    <!-- Contenido del modal -->
+    <section
+      class="bg-white rounded-xl p-6 max-w-4xl w-[max-content] mx-4 shadow-lg relative max-h-[90vh] overflow-y-auto overflow-x-hidden">
+      <app-icon (click)="toggleForm()" [icon]="'x'"
+        [className]="'absolute right-2 top-2 cursor-pointer w-5 h-5'"></app-icon>
+      <div class="flex items-center justify-between mb-5 w-[max-content]">
+        <app-dynamic-form [titleForm]="'Añadir nueva cita'"
+          [subtitleForm]="'Rellena los datos para añadir una nueva cita'"
+          [fields]="appointmentsFields" [className]="'w-full'"
+          [endpointUrl]="appointmentEndpoint" [method]="'POST'"
+          [backButton]="backButton" [submitButton]="addButton"
+          (submitSuccess)="onSubmitSuccess($event)"
+          (submitError)="onSubmitError($event)" (loading)="setLoading($event)">
+        </app-dynamic-form>
+      </div>
 
-  </section>
-</div>
+    </section>
+  </div>
 }

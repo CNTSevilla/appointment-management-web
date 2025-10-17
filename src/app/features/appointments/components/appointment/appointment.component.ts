@@ -18,105 +18,65 @@ import { IconComponent } from '../../../../shared/components/atoms/icon/icon.com
 export class AppointmentComponent {
   constructor(private router: Router ) {}
 
-  loginFields: FormField[] = [
-    {
-      name: 'title',
-      label: 'Título',
-      type: 'text',
-      required: true,
-      min: 6,
-      max: 50,
-      placeholder: 'Cita de Juan'
-    },
-    {
-      name: 'priority',
-      label: 'Prioridad',
-      type: 'select',
-      options: [
-        { value: 'es', label: 'Alta' },
-        { value: 'mx', label: 'Media' },
-        { value: 'ar', label: 'Baja' }
-      ]
-    },
-    {
-      name: 'status',
-      label: 'Estado',
-      type: 'select',
-      options: [
-        { value: 'es', label: 'Completado' },
-        { value: 'mx', label: 'En proceso' },
-        { value: 'ar', label: 'Por hacer' }
-      ]
-    },
-    {
-      name: 'helper',
-      label: 'Usuario asignado',
-      type: 'select',
-      options: [
-        { value: 'es', label: 'Alexis' },
-        { value: 'mx', label: 'Ruben' },
-        { value: 'ar', label: 'Jesús' }
-      ]
-    },
-    {
-      name: 'person_in_need',
-      label: 'Persona que necesita ayuda',
-      type: 'select',
-      options: [
-        { value: 'es', label: 'Persona1' },
-        { value: 'mx', label: 'Persona2' },
-        { value: 'ar', label: 'Persona3' }
-      ]
-    },
-  ];
-
-  addAppointment: FormField[] = [
-    {
-      name: 'priority',
-      label: 'Prioridad',
-      type: 'select',
-      options: [
-        { value: 'es', label: 'Alta' },
-        { value: 'mx', label: 'Media' },
-        { value: 'ar', label: 'Baja' }
-      ]
-    },
-    {
-      name: 'status',
-      label: 'Estado',
-      type: 'select',
-      options: [
-        { value: 'es', label: 'Completado' },
-        { value: 'mx', label: 'En proceso' },
-        { value: 'ar', label: 'Por hacer' }
-      ]
-    },
-    {
-      name: 'helper',
-      label: 'Usuario asignado',
-      type: 'select',
-      options: [
-        { value: 'es', label: 'Alexis' },
-        { value: 'mx', label: 'Ruben' },
-        { value: 'ar', label: 'Jesús' }
-      ]
-    },
-    {
-      name: 'person_in_need',
-      label: 'Persona que necesita ayuda',
-      type: 'select',
-      options: [
-        { value: 'es', label: 'Persona1' },
-        { value: 'mx', label: 'Persona2' },
-        { value: 'ar', label: 'Persona3' }
-      ]
-    },
+  toastData: ToastData | null = null;
+  addButton = 'Añadir cita';
+  backButton = '';
+  appointmentEndpoint = '/appointment';
+  isLoading = false;
+  isFormOpen = false;
+  appointmentsFields: FormField[] = [
     {
       name: 'date_time',
       label: 'Fecha y hora',
       type: 'datetime-local',
-      required: false,
-      placeholder: '2024-12-31T23:59'
+      required: true,
+    },
+    {
+      name: 'priority',
+      label: 'Prioridad',
+      type: 'select',
+      required: true,
+      options: [
+        { value: 'HIGH', label: 'Alta' },
+        { value: 'LOW', label: 'Baja' },
+        { value: 'MEDIUM', label: 'Media' },
+      ],
+    },
+    {
+      name: 'status',
+      label: 'Estado',
+      type: 'select',
+      required: true,
+      options: [
+        { value: 'ACTIVE', label: 'Activo' },
+        { value: 'ARCHIVED', label: 'Archivado' },
+        { value: 'COMPLETED', label: 'Completado' },
+        { value: 'DEFERRED', label: 'Aplazado' },
+      ],
+    },
+    {
+      name: 'helper_id',
+      label: 'Ayudante asignado',
+      type: 'select',
+      required: true,
+      options: [
+        { value: 'ACTIVE', label: 'Alexis' },
+        { value: 'ARCHIVED', label: 'Jesús' },
+        { value: 'COMPLETED', label: 'Rubén' },
+        { value: 'DEFERRED', label: 'Angel' },
+      ],
+    },
+    {
+      name: 'person_in_need_id',
+      label: 'Persona necesitada',
+      type: 'select',
+      required: true,
+      options: [
+        { value: 'ACTIVE', label: 'Persona1' },
+        { value: 'ARCHIVED', label: 'Persona2' },
+        { value: 'COMPLETED', label: 'Persona3' },
+        { value: 'DEFERRED', label: 'Persona4' },
+      ],
     },
     {
       name: 'comment',
@@ -126,22 +86,67 @@ export class AppointmentComponent {
       placeholder: 'Escribe un comentario...'
     },
   ];
-  toastData: ToastData | null = null;
-  loginButton = 'Filtrar';
-  backButton = '';
-  loginEndpoint = '/authentication/sign-in';
-  isLoading = false;
-  isFormOpen = false;
+  filterFields: FormField[] = [
+    {
+      name: 'date_time',
+      label: 'Fecha y hora',
+      type: 'datetime-local',
+      required: true,
+    },
+    {
+      name: 'priority',
+      label: 'Prioridad',
+      type: 'select',
+      required: true,
+      options: [
+        { value: 'HIGH', label: 'Alta' },
+        { value: 'LOW', label: 'Baja' },
+        { value: 'MEDIUM', label: 'Media' },
+      ],
+    },
+    {
+      name: 'status',
+      label: 'Estado',
+      type: 'select',
+      required: true,
+      options: [
+        { value: 'ACTIVE', label: 'Activo' },
+        { value: 'ARCHIVED', label: 'Archivado' },
+        { value: 'COMPLETED', label: 'Completado' },
+        { value: 'DEFERRED', label: 'Aplazado' },
+      ],
+    },
+    {
+      name: 'helper_id',
+      label: 'Ayudante asignado',
+      type: 'select',
+      required: true,
+      options: [
+        { value: 'ACTIVE', label: 'Alexis' },
+        { value: 'ARCHIVED', label: 'Jesús' },
+        { value: 'COMPLETED', label: 'Rubén' },
+        { value: 'DEFERRED', label: 'Angel' },
+      ],
+    },
+    {
+      name: 'person_in_need_id',
+      label: 'Persona necesitada',
+      type: 'select',
+      required: true,
+      options: [
+        { value: 'ACTIVE', label: 'Persona1' },
+        { value: 'ARCHIVED', label: 'Persona2' },
+        { value: 'COMPLETED', label: 'Persona3' },
+        { value: 'DEFERRED', label: 'Persona4' },
+      ],
+    }
+  ];
 
-  onLoginSuccess(response: LoginResponse): void {
-    console.log('Login exitoso:', response);
-    // 1. Guardar el token en el sessionStorage
-    sessionStorage.setItem('token', response.token);
-    // 2. Redirigir a la home
-    this.router.navigate(['/']);
+  onSubmitSuccess(response: LoginResponse): void {
+    console.log('Submit exitoso:', response);
   }
 
-  onLoginError(error: any): void {
+  onSubmitError(error: any): void {
     console.error('Error en el login:', error);
     // 1. Mostrar un mensaje de error al usuario
     this.toastData = { type: 'error', text: 'Error en el inicio de sesión. Por favor, inténtelo de nuevo.', duration: 5000 };
@@ -152,4 +157,11 @@ export class AppointmentComponent {
     this.isFormOpen = !this.isFormOpen;
   }
 
+  setLoading(isLoading: boolean): void {
+    this.isLoading = isLoading;
+  }
+
+  closeToast(): void {
+    this.toastData = null;
+  }
 }
