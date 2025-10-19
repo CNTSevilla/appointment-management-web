@@ -13,6 +13,7 @@
       @if (['text','email','password','number','date','datetime-local','time', 'tel'].includes(field.type)) {
         <input [type]="field.type"
                 [id]="field.name"
+                [value]="field.value || ''"
                 [formControlName]="field.name"
                 [placeholder]="field.placeholder"
                 [minLength]="field.min  || 0"
@@ -25,6 +26,7 @@
       @if (field.type === 'textarea') {
         <textarea rows="3"
                   [id]="field.name"
+                  [value]="field.value || ''"
                   [formControlName]="field.name"
                   [placeholder]="field.placeholder"
                   class="transition-all .2s ease block w-full rounded-md bg-white px-4 py-2 text-md text-gray-900 outline-2 -outline-offset-2 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-md/6">
