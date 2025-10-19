@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { HeaderComponent } from '../../../../shared/components/organism/header/header.component';
 import { TitleComponent } from '../../../../shared/components/atoms/title/title.component';
 import { DynamicFormComponent } from '../../../../shared/components/molecules/dynamic-form/dynamic-form.component';
@@ -32,10 +32,14 @@ export class UserListComponent {
     page: 0,
     size: 5
   }
+  public PIDselected: any = {
+    id: -1,
+    index: -1
+  }
   public totalItemsHelpers: number = 0;
   public totalPagesHelpers: number = 0;
   public currentPageHelpers: number = 0;
-
+  public isPopupOpen: boolean = false;
   public pagedPersonsInNeeds: any = {
     page: 0,
     size: 5
@@ -75,7 +79,10 @@ export class UserListComponent {
     },
   ];
 
-  addButton = 'Añadir usuario';
+  addButtonPIN = 'Añadir usuario';
+  titleFormPIN = 'Nuevo usuario externo';
+  subtitleFormPIN = 'Rellena los datos para añadir un nuevo usuario externo';
+  methodPIN: 'POST' | 'PUT' = 'POST';
   PINEndpoint = '/person_in_need';
   public PINFields: FormField[] = [
     {
@@ -84,6 +91,7 @@ export class UserListComponent {
       type: 'text',
       placeholder: 'Jesús Pérez',
       required: true,
+      value: ''
     },
     {
       name: 'email',
@@ -91,6 +99,7 @@ export class UserListComponent {
       type: 'email',
       placeholder: 'example@gmail.com',
       required: true,
+      value: ''
     },
     {
       name: 'phone',
@@ -98,9 +107,13 @@ export class UserListComponent {
       type: 'tel',
       placeholder: '000 000 000',
       required: true,
+      value: ''
     },
   ];
 
+  addButtonHelpers = 'Añadir usuario';
+  titleFormHelpers = 'Añadir nuevo usuario (CNT)';
+  subtitleFormHelpers = 'Rellena los datos para añadir un nuevo usuario interno (CNT)';
   HelperEndpoint = '/helper';
   public HelperFields: FormField[] = [
     {
@@ -143,6 +156,8 @@ export class UserListComponent {
       ],
     }
   ];
+
+
 
   constructor(private http: HttpClient, private router: Router) {
     this.getUsers(this.pagedHelpers, this.pagedPersonsInNeeds)
@@ -199,6 +214,36 @@ export class UserListComponent {
     console.log('User List exitoso:', response);
   }
 
+  onSubmitSuccessPIN(response: any, method: string): void {
+    if (method === 'POST') {
+      console.log('PIN:', response);
+      this.personsInNeed.push(response);
+      this.totalItemsPersonsInNeeds += 1;
+      this.PINFields = this.PINFields.map(field => {
+        return { ...field, value: '' };
+      });
+      this.dropdownOpenPIN.push(false);
+      this.isFormOpenPIN = false;
+      this.toastData = { type: 'success', text: 'Usuario externo añadida correctamente.', duration: 5000 };
+    } else if (method === 'PUT') {
+      console.log('PIN Editado:', response);
+      const index = this.PIDselected.index;
+      this.personsInNeed[index] = response;
+      console.log(this.personsInNeed)
+      this.PINFields = this.PINFields.map(field => {
+        return { ...field, value: '' };
+      });
+      this.dropdownOpenPIN[index] = false;
+      this.isFormOpenPIN = false;
+      this.toastData = { type: 'success', text: 'Usuario externo editado correctamente.', duration: 5000 };
+    }
+
+  }
+
+  onSubmitSuccessHelpers(response: any): void {
+    console.log('Helpers:', response);
+  }
+
   onSubmitError(error: any): void {
     console.error('Error en el login:', error);
     // 1. Mostrar un mensaje de error al usuario
@@ -206,11 +251,90 @@ export class UserListComponent {
 
   }
 
+  openPopup(personId: number = -1, index: number = -1): void {
+    this.isPopupOpen = !this.isPopupOpen;
+
+    if (personId !== -1 && index !== -1){
+      this.PIDselected = { id: personId, index: index };
+    } else{
+      this.PIDselected = { id: -1, index: -1 };
+    }
+  }
+
+  deletePersonInNeed(id: number, index: number): void {
+
+    this.request.delete(`${this.PINEndpoint}/${id}`).subscribe({
+      next: () => {
+        this.openPopup();
+        this.personsInNeed.splice(index, 1);
+        this.totalItemsPersonsInNeeds -= 1;
+        if (this.personsInNeed.length === 0 && this.currentPagePersonsInNeeds > 1)
+          this.pageMove(false, this.pagedPersonsInNeeds, 'persons');
+
+        this.toastData = { type: 'success', text: 'Persona necesitada eliminada correctamente.', duration: 5000 };
+      },
+      error: (error) => {
+        console.error('Error al eliminar la persona necesitada:', error);
+        this.toastData = { type: 'error', text: 'Error al eliminar la persona necesitada. Por favor, inténtelo de nuevo.', duration: 5000 };
+      }
+    });
+  }
+
+  onSubmitErrorPIN(error: any): void {
+    console.error('Error en el login:', error);
+    // 1. Mostrar un mensaje de error al usuario
+    this.toastData = { type: 'error', text: 'Error en el inicio de sesión. Por favor, inténtelo de nuevo.', duration: 5000 };
+
+  }
+  onSubmitErrorHelpers(error: any): void {
+    console.error('Error en el login:', error);
+    // 1. Mostrar un mensaje de error al usuario
+    this.toastData = { type: 'error', text: 'Error en el inicio de sesión. Por favor, inténtelo de nuevo.', duration: 5000 };
+
+  }
+
+  editPersonInNeed(person: any, index: number): void {
+    console.log(person)
+    this.PIDselected = { id: person.id, index: index };
+    this.isFormOpenPIN = true;
+    this.PINEndpoint = `/person_in_need/${person.id}`;
+    this.addButtonPIN = 'Editar usuario';
+    this.titleFormPIN = 'Editar usuario externo';
+    this.subtitleFormPIN = 'Rellena los datos para editar la persona necesitada';
+    this.methodPIN = 'PUT';
+    this.dropdownOpenPIN = this.dropdownOpenPIN.map(() => false);
+    this.PINFields = this.PINFields.map(field => {
+      return {
+        ...field,
+        value: this.getValueForField(field.name, person),
+      };
+    });
+
+
+  }
+
+  getValueForField(name: string, person: any): string {
+    console.log(name, person)
+    switch (name) {
+      case 'name': return person.name;
+      case 'email': return person.email;
+      case 'phone': return person.phone;
+      default: return '';
+    }
+  }
+
   setLoading(isLoading: boolean): void {
     this.isLoading = isLoading;
   }
 
   toggleFormPIN(): void {
+    this.addButtonPIN = 'Añadir usuario';
+    this.titleFormPIN = 'Añadir usuario externo';
+    this.subtitleFormPIN = 'Rellena los datos para añadir la persona necesitada';
+    this.methodPIN = 'POST';
+    this.PINFields = this.PINFields.map(field => {
+      return { ...field, value: '' };
+    });
     this.isFormOpenPIN = !this.isFormOpenPIN;
   }
 
