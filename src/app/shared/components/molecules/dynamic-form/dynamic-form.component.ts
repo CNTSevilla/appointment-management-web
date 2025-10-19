@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormField } from '../../../../core/models/form-field.model';
 import { HttpClient } from '@angular/common/http';
@@ -35,61 +35,83 @@ export class DynamicFormComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private http: HttpClient, private api: RequestService) { }
 
-  ngOnInit(): void {
+  private buildFormFromFields(): void {
     this.form = this.fb.group({});
+    const group: { [key: string]: any } = {};
+
     this.fields.forEach(field => {
-        const validators = [];
+      const validators = [];
 
-        // Requerido
-        if (field.required) {
-          validators.push(Validators.required);
-        }
+      if (field.required) validators.push(Validators.required);
+      if (field.type === 'tel') validators.push(Validators.pattern('^(\\+?\\d{2})?\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}$'));
+      if (field.type === 'email') validators.push(Validators.email);
 
-        // Phone
-        if (field.type === 'tel') {
-          validators.push(Validators.pattern('^(\\+?\\d{2})?\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}$'));
-        }
+      if (field.type === 'number') {
+        if (field.min !== undefined) validators.push(Validators.min(+field.min));
+        if (field.max !== undefined) validators.push(Validators.max(+field.max));
+      }
 
-        // Email
-        if (field.type === 'email') {
-          validators.push(Validators.email);
-        }
+      if (['text', 'textarea', 'email', 'password'].includes(field.type)) {
+        if (field.min !== undefined) validators.push(Validators.minLength(+field.min));
+        if (field.max !== undefined) validators.push(Validators.maxLength(+field.max));
+      }
 
-        // Número: min, max
-        if (field.type === 'number') {
-          if (field.min !== undefined) {
-            validators.push(Validators.min(+field.min));
-          }
-          if (field.max !== undefined) {
-            validators.push(Validators.max(+field.max));
-          }
-        }
+      if (field.type === 'file' && field.required) validators.push(Validators.required);
+      if (field.type === 'checkbox' && field.required) validators.push(Validators.requiredTrue);
 
-        // Longitud mínima/máxima (si usas step como longitud o deseas agregar luego)
-      if (field.type === 'text' || field.type === 'textarea' || field.type === 'email' || field.type === 'password') {
-          if (field.min !== undefined) {
-            validators.push(Validators.minLength(+field.min));
-          }
-          if (field.max !== undefined) {
-            validators.push(Validators.maxLength(+field.max));
-          }
-        }
+      this.form.addControl(field.name, this.fb.control('', validators));
 
-        // Archivo obligatorio
-        if (field.type === 'file' && field.required) {
-          validators.push(Validators.required);
-        }
+      group[field.name] = this.fb.control(field.value || '', validators);
 
-        // Checkbox requerido (solo sentido si es "acepto condiciones", etc.)
-        if (field.type === 'checkbox' && field.required) {
-          validators.push(Validators.requiredTrue);
-        }
-
-        // Añadir control al formulario
-        this.form.addControl(field.name, this.fb.control('', validators));
 
     });
+
+    this.form = this.fb.group(group); // 🔁 Crea nuevo FormGroup limpio
+
   }
+
+  ngOnInit(): void {
+    this.buildFormFromFields();
+
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('Changes detected in DynamicFormComponent:', changes);
+
+    if (changes['fields']) {
+      // Reconstruir el formulario cuando los campos cambian
+      this.buildFormFromFields();
+    }
+
+    if (changes['titleForm']) {
+      this.titleForm = changes['titleForm'].currentValue;
+    }
+
+    if (changes['subtitleForm']) {
+      this.subtitleForm = changes['subtitleForm'].currentValue;
+    }
+
+    if (changes['submitButton']) {
+      this.submitButton = changes['submitButton'].currentValue;
+    }
+
+    if (changes['backButton']) {
+      this.backButton = changes['backButton'].currentValue;
+    }
+
+    if (changes['endpointUrl']) {
+      this.endpointUrl = changes['endpointUrl'].currentValue;
+    }
+
+    if (changes['method']) {
+      this.method = changes['method'].currentValue;
+    }
+
+    if (changes['className']) {
+      this.className = changes['className'].currentValue;
+    }
+  }
+
 
   onSubmit(): void {
     if (this.form.invalid || !this.endpointUrl) return;
