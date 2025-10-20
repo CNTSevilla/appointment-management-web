@@ -32,9 +32,10 @@ export class UserListComponent {
     page: 0,
     size: 5
   }
-  public PIDselected: any = {
+  public userSelected: any = {
     id: -1,
-    index: -1
+    index: -1,
+    type: ''
   }
   public totalItemsHelpers: number = 0;
   public totalPagesHelpers: number = 0;
@@ -154,6 +155,13 @@ export class UserListComponent {
         { value: 'ADMIN', label: 'Administrador' },
         { value: 'USER', label: 'Usuario normal' },
       ],
+    },
+    {
+      name: 'password',
+      label: 'Contraseña',
+      type: 'password',
+      placeholder: '********',
+      required: true,
     }
   ];
 
@@ -227,7 +235,7 @@ export class UserListComponent {
       this.toastData = { type: 'success', text: 'Usuario externo añadida correctamente.', duration: 5000 };
     } else if (method === 'PUT') {
       console.log('PIN Editado:', response);
-      const index = this.PIDselected.index;
+      const index = this.userSelected.index;
       this.personsInNeed[index] = response;
       console.log(this.personsInNeed)
       this.PINFields = this.PINFields.map(field => {
@@ -242,6 +250,14 @@ export class UserListComponent {
 
   onSubmitSuccessHelpers(response: any): void {
     console.log('Helpers:', response);
+    this.helpers.push(response);
+    this.totalItemsHelpers += 1;
+    this.HelperFields = this.PINFields.map(field => {
+      return { ...field, value: '' };
+    });
+    this.dropdownOpenHelpers.push(false);
+    this.isFormOpenHelpers = false;
+    this.toastData = { type: 'success', text: 'Usuario (CNT) añadido correctamente.', duration: 5000 };
   }
 
   onSubmitError(error: any): void {
@@ -251,33 +267,50 @@ export class UserListComponent {
 
   }
 
-  openPopup(personId: number = -1, index: number = -1): void {
+  openPopup(personId: number = -1, index: number = -1, type: string = ''): void {
     this.isPopupOpen = !this.isPopupOpen;
-
     if (personId !== -1 && index !== -1){
-      this.PIDselected = { id: personId, index: index };
+      this.userSelected = { id: personId, index: index, type: type };
     } else{
-      this.PIDselected = { id: -1, index: -1 };
+      this.userSelected = { id: -1, index: -1, type: '' };
     }
   }
 
-  deletePersonInNeed(id: number, index: number): void {
+  deleteUser(id: number, index: number, type: string): void {
 
-    this.request.delete(`${this.PINEndpoint}/${id}`).subscribe({
-      next: () => {
-        this.openPopup();
-        this.personsInNeed.splice(index, 1);
-        this.totalItemsPersonsInNeeds -= 1;
-        if (this.personsInNeed.length === 0 && this.currentPagePersonsInNeeds > 1)
-          this.pageMove(false, this.pagedPersonsInNeeds, 'persons');
+    if (type === 'PID'){
+      this.request.delete(`${this.PINEndpoint}/${id}`).subscribe({
+        next: () => {
+          this.openPopup();
+          this.personsInNeed.splice(index, 1);
+          this.totalItemsPersonsInNeeds -= 1;
+          if (this.personsInNeed.length === 0 && this.currentPagePersonsInNeeds > 1)
+            this.pageMove(false, this.pagedPersonsInNeeds, 'persons');
 
-        this.toastData = { type: 'success', text: 'Persona necesitada eliminada correctamente.', duration: 5000 };
-      },
-      error: (error) => {
-        console.error('Error al eliminar la persona necesitada:', error);
-        this.toastData = { type: 'error', text: 'Error al eliminar la persona necesitada. Por favor, inténtelo de nuevo.', duration: 5000 };
-      }
-    });
+          this.toastData = { type: 'success', text: 'Persona necesitada eliminada correctamente.', duration: 5000 };
+        },
+        error: (error) => {
+          console.error('Error al eliminar la persona necesitada:', error);
+          this.toastData = { type: 'error', text: 'Error al eliminar la persona necesitada. Por favor, inténtelo de nuevo.', duration: 5000 };
+        }
+      });
+    } else if (type === 'Helper'){
+      this.request.delete(`${this.HelperEndpoint}/${id}`).subscribe({
+        next: () => {
+          this.openPopup();
+          this.helpers.splice(index, 1);
+          this.totalItemsHelpers -= 1;
+          if (this.helpers.length === 0 && this.currentPageHelpers > 1)
+            this.pageMove(false, this.pagedHelpers, 'helpers');
+
+          this.toastData = { type: 'success', text: 'Usuario (CNT) eliminado correctamente.', duration: 5000 };
+        },
+        error: (error) => {
+          console.error('Error al eliminar el usuario (CNT):', error);
+          this.toastData = { type: 'error', text: 'Error al eliminar el usuario (CNT). Por favor, inténtelo de nuevo.', duration: 5000 };
+        }
+      });
+    }
   }
 
   onSubmitErrorPIN(error: any): void {
@@ -295,7 +328,7 @@ export class UserListComponent {
 
   editPersonInNeed(person: any, index: number): void {
     console.log(person)
-    this.PIDselected = { id: person.id, index: index };
+    this.userSelected = { id: person.id, index: index, type: 'PID' };
     this.isFormOpenPIN = true;
     this.PINEndpoint = `/person_in_need/${person.id}`;
     this.addButtonPIN = 'Editar usuario';
