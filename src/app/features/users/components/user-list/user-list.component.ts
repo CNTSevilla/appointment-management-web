@@ -146,12 +146,12 @@ export class UserListComponent {
       required: true,
     },
     {
-      name: 'roles',
+      name: 'role',
       label: 'Rol',
       type: 'select',
       required: true,
       options: [
-        { value: 'HELPER', label: 'Helper' },
+        { value: 'SYSTEM', label: 'Helper' },
         { value: 'ADMIN', label: 'Administrador' },
         { value: 'USER', label: 'Usuario normal' },
       ],
