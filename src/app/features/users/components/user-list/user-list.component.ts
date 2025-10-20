@@ -237,6 +237,7 @@ export class UserListComponent {
       console.log('PIN Editado:', response);
       const index = this.userSelected.index;
       this.personsInNeed[index] = response;
+      this.PINEndpoint = '/person_in_need';
       console.log(this.personsInNeed)
       this.PINFields = this.PINFields.map(field => {
         return { ...field, value: '' };
