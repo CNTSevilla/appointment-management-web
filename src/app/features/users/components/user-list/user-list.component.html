@@ -1,350 +1,406 @@
 <app-header></app-header>
+
+<!-- Contenedor principal con margen para el header y sidebar -->
 <div class="mt-[72px] ml-[256px]">
+
+  <!-- ====================== FORMULARIO DE FILTROS ====================== -->
   <app-dynamic-form [titleForm]="'Filtrar usuarios'"
     [subtitleForm]="'Rellena los campos para filtrar los usuarios'"
-    [fields]="userListFields" [className]="'w-full px-24 py-12 bg-gray-50'" [endpointUrl]="userListEndpoint"
-    [method]="'GET'" [backButton]="backButton" [submitButton]="userListButton" [isFilterForm]="true"
-    (submitSuccess)="onSubmitSuccess($event)" (submitError)="onSubmitError($event)"
-    (loading)="setLoading($event)">></app-dynamic-form>
+    [fields]="filterFormFields" [className]="'w-full px-24 py-12 bg-gray-50'"
+    [endpointUrl]="internalUsersEndpoint" [method]="'GET'"
+    [backButton]="backButtonText" [submitButton]="filterButtonText"
+    [isFilterForm]="true" (submitSuccess)="onFilterSubmitSuccess($event)"
+    (submitError)="onFormError($event)" (loading)="setLoading($event)">
+  </app-dynamic-form>
 
-
+  <!-- ====================== LISTADOS DE USUARIOS ====================== -->
   <section class="relative bg-gray-50 h-[60vh]">
     <div class="w-full px-24 pb-6 relative z-10 backdrop-blur-3xl">
-      <section class="flex items-center justify-between">
-        <app-title class="m-4" [className]="'font-sans self-center text-2xl font-semibold sm:text-3xl whitespace-nowrap'"
-          [title]="'Usuarios (CNT)'"></app-title>
 
-      <app-button (click)="toggleFormHelpers()"
-        class="w-xs"
-        [text]="'Añadir usuario (CNT)'" [type]="'submit'"
-        [className]="'px-3 text-md font-semibold w-full py-[10px]'"></app-button>
+      <!-- ==================== USUARIOS INTERNOS (CNT) ==================== -->
+      <section class="flex items-center justify-between">
+        <app-title class="m-4"
+          [className]="'font-sans self-center text-2xl font-semibold sm:text-3xl whitespace-nowrap'"
+          [title]="'Usuarios (CNT)'">
+        </app-title>
+
+        <app-button (click)="toggleInternalUserForm()" class="w-xs"
+          [text]="'Añadir usuario (CNT)'" [type]="'submit'"
+          [className]="'px-3 text-md font-semibold w-full py-[10px]'">
+        </app-button>
       </section>
 
-      @if (helpers?.length > 0) {
-        <div class="overflow-x-auto p-6 rounded-xl bg-white">
-          <table class="min-w-full divide-y-2 divide-gray-200">
-            <thead class="ltr:text-left rtl:text-right">
-              <tr class="*:font-medium *:text-gray-900">
-                <th class="px-3 py-2 whitespace-nowrap">Nombre</th>
-                <th class="px-3 py-2 whitespace-nowrap">Email</th>
-                <th class="px-3 py-2 whitespace-nowrap">Nombre de usuario</th>
-                <th class="px-3 py-2 whitespace-nowrap">Teléfono</th>
-                <th class="px-3 py-2 whitespace-nowrap">Fecha de creación</th>
-                <th class="px-3 py-2 whitespace-nowrap">Rol</th>
-                <th class="px-3 py-2 whitespace-nowrap">Acciones</th>
-              </tr>
-            </thead>
+      @if (internalUsers.length > 0) {
+      <!-- Tabla de usuarios internos -->
+      <div class="overflow-x-auto p-6 rounded-xl bg-white">
+        <table class="min-w-full divide-y-2 divide-gray-200">
+          <thead class="ltr:text-left rtl:text-right">
+            <tr class="*:font-medium *:text-gray-900">
+              <th class="px-3 py-2 whitespace-nowrap">Nombre</th>
+              <th class="px-3 py-2 whitespace-nowrap">Email</th>
+              <th class="px-3 py-2 whitespace-nowrap">Nombre de usuario</th>
+              <th class="px-3 py-2 whitespace-nowrap">Teléfono</th>
+              <th class="px-3 py-2 whitespace-nowrap">Fecha de creación</th>
+              <th class="px-3 py-2 whitespace-nowrap">Rol</th>
+              <th class="px-3 py-2 whitespace-nowrap">Acciones</th>
+            </tr>
+          </thead>
 
-            <tbody class="divide-y divide-gray-200">
-              @for (helper of helpers; track helper; let i = $index) {
-              <tr class="*:text-gray-900 *:first:font-medium">
-                <td class="px-3 py-2 whitespace-nowrap">{{helper.name}}</td>
-                <td class="px-3 py-2 whitespace-nowrap">{{helper.email}}</td>
-                <td class="px-3 py-2 whitespace-nowrap">{{helper.username}}</td>
-                <td class="px-3 py-2 whitespace-nowrap">{{helper.phone}}</td>
-                <td class="px-3 py-2 whitespace-nowrap">{{ helper.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</td>
-                <td class="px-3 py-2 whitespace-nowrap">
-                  <span
-                      [ngClass]="
-                        helper.role[0] === 'ADMIN' ? 'inline-flex items-center rounded-md bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 inset-ring inset-ring-red-400/20' :
-                        helper.role[0] === 'SYSTEM' ? 'inline-flex items-center rounded-md bg-yellow-400/10 px-2 py-1 text-xs font-medium text-yellow-500 inset-ring inset-ring-yellow-400/20' :
-                        helper.role[0] === 'USER' ? 'inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 inset-ring inset-ring-gray-400/20' :
+          <tbody class="divide-y divide-gray-200">
+            @for (user of internalUsers; track user; let i = $index) {
+            <tr class="*:text-gray-900 *:first:font-medium">
+              <td class="px-3 py-2 whitespace-nowrap">{{ user.name }}</td>
+              <td class="px-3 py-2 whitespace-nowrap">{{ user.email }}</td>
+              <td class="px-3 py-2 whitespace-nowrap">{{ user.username }}</td>
+              <td class="px-3 py-2 whitespace-nowrap">{{ user.phone }}</td>
+              <td class="px-3 py-2 whitespace-nowrap">
+                {{ user.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}
+              </td>
+              <td class="px-3 py-2 whitespace-nowrap">
+                <span [ngClass]="
+                        user.role[0] === 'ADMIN' ? 'inline-flex items-center rounded-md bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 inset-ring inset-ring-red-400/20' :
+                        user.role[0] === 'SYSTEM' ? 'inline-flex items-center rounded-md bg-yellow-400/10 px-2 py-1 text-xs font-medium text-yellow-500 inset-ring inset-ring-yellow-400/20' :
+                        user.role[0] === 'USER' ? 'inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 inset-ring inset-ring-gray-400/20' :
                         'inline-flex items-center rounded-md bg-gray-200 px-2 py-1 text-xs font-medium text-gray-600'
-                      "
-                    >{{helper.role}}</span>
-                </td>
+                      ">
+                  {{ user.role }}
+                </span>
+              </td>
 
-                <td class="px-3 py-2 whitespace-nowrap relative">
+              <!-- Dropdown de acciones -->
+              <td class="px-3 py-2 whitespace-nowrap relative">
+                <button type="button" (click)="toggleInternalUserDropdown(i)"
+                  class="inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
+                    viewBox="0 0 12 4" fill="none">
+                    <path
+                      d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
+                      stroke="currentcolor" stroke-width="2.5"
+                      stroke-linecap="round"></path>
+                  </svg>
+                </button>
 
-                  <button type="button" (click)="openDropdownHelpers(i)"
-                    data-target="dropdown-default"
-                    class="dropdown-toggle inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600  ">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
-                      viewBox="0 0 12 4" fill="none">
-                      <path
-                        d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
-                        stroke="currentcolor" stroke-width="2.5" stroke-linecap="round"></path>
-                    </svg>
-                  </button>
-                  @if (dropdownOpenHelpers[i] === true) {
-                    <ul role="none" class="py-2 bg-gray-50 dark:bg-gray-900 rounded-md shadow-md absolute top-10 right-2/3 dropdown-menu z-10">
-                      <li (click)="openPopup(helper.id, i, 'Helper')">
-                        <div role="menuitem"
-                          class="block cursor-pointer mx-2 transition-all .2s ease rounded-md px-6 py-2 text-md text-gray-700 hover:bg-rose-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-rose-700 dark:hover:text-white">
-                          Borrar</div>
-                      </li>
-                    </ul>
-                  }
-              </tr>
-              }
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="7">
-                  <ul
-                    class="w-full flex justify-between items-center gap-3 text-gray-900 w-[max-content]">
-                    <div
-                      class="flex justify-center items-center gap-3 text-gray-900 w-[max-content] mt-5">
-                      <li>
-                        <button (click)="pageMove(false, pagedHelpers, 'helpers')"
-                          [disabled]="currentPageHelpers <= 1" [ngClass]="{
-                            'opacity-40 cursor-not-allowed': currentPageHelpers <= 1,
-                            'cursor-pointer hover:bg-red-600 hover:text-white': currentPageHelpers > 1
-                          }"
-                          class="border-2 border-red-600 text-red-600 p-1 rounded transition-all duration-300">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                            viewBox="0 0 16 16" fill="none">
-                            <path d="M10.0002 11.9999L6 7.99971L10.0025 3.99719" stroke="currentcolor"
-                              stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-                            </path>
-                          </svg>
-                        </button>
-                      </li>
-
-                      <li class="text-sm font-medium text-black tracking-widest"><span class="text-red-400 font-bold text-lg">{{ currentPageHelpers }}</span>/{{ totalPagesHelpers}}</li>
-
-                      <li>
-                        <button (click)="pageMove(true, pagedHelpers, 'helpers')" [disabled]="currentPageHelpers >= totalPagesHelpers"
-                                [ngClass]="{
-                                  'opacity-40 cursor-not-allowed': currentPageHelpers >= totalPagesHelpers,
-                                  'hover:bg-red-600 hover:text-white cursor-pointer': currentPageHelpers < totalPagesHelpers
-                                }"
-                               class="border-2 border-red-600 text-red-600 p-1 rounded transition-all duration-300">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                            viewBox="0 0 16 16" fill="none">
-                            <path d="M6.00236 3.99707L10.0025 7.99723L6 11.9998"
-                              stroke="currentcolor" stroke-width="1.3"
-                              stroke-linecap="round" stroke-linejoin="round">
-                            </path>
-                          </svg>
-                        </button>
-                      </li>
+                @if (internalUserDropdownsOpen[i]) {
+                <ul role="none"
+                  class="py-2 bg-gray-50 dark:bg-gray-900 rounded-md shadow-md absolute top-10 right-2/3 dropdown-menu z-10">
+                  <li (click)="toggleConfirmationPopup(user.id, i, 'Helper')">
+                    <div role="menuitem"
+                      class="block cursor-pointer mx-2 transition-all .2s ease rounded-md px-6 py-2 text-md text-gray-700 hover:bg-rose-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-rose-700">
+                      Borrar
                     </div>
-                    <li class="text-md font-medium text-black text-end"><span
-                        class="font-bold text-lg text-red-400">{{ totalItemsHelpers
-                        }}</span> usuario(s)</li>
-                  </ul>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+                  </li>
+                </ul>
+                }
+              </td>
+            </tr>
+            }
+          </tbody>
+
+          <!-- Paginación interna -->
+          <tfoot>
+            <tr>
+              <td colspan="7">
+                <ul
+                  class="w-full flex justify-between items-center gap-3 text-gray-900 w-[max-content]">
+                  <div
+                    class="flex justify-center items-center gap-3 text-gray-900 w-[max-content] mt-5">
+                    <li>
+                      <button
+                        (click)="changePage(false, internalUsersPagination, 'internal')"
+                        [disabled]="currentPageInternalUsers <= 1" [ngClass]="{
+                            'opacity-40 cursor-not-allowed': currentPageInternalUsers <= 1,
+                            'cursor-pointer hover:bg-red-600 hover:text-white': currentPageInternalUsers > 1
+                          }"
+                        class="border-2 border-red-600 text-red-600 p-1 rounded transition-all duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                          height="16" viewBox="0 0 16 16" fill="none">
+                          <path d="M10.0002 11.9999L6 7.99971L10.0025 3.99719"
+                            stroke="currentcolor" stroke-width="1.3"
+                            stroke-linecap="round" stroke-linejoin="round">
+                          </path>
+                        </svg>
+                      </button>
+                    </li>
+
+                    <li class="text-sm font-medium text-black tracking-widest">
+                      <span class="text-red-400 font-bold text-lg">{{
+                        currentPageInternalUsers }}</span>/
+                      {{ totalPagesInternalUsers }}
+                    </li>
+
+                    <li>
+                      <button
+                        (click)="changePage(true, internalUsersPagination, 'internal')"
+                        [disabled]="currentPageInternalUsers >= totalPagesInternalUsers"
+                        [ngClass]="{
+                            'opacity-40 cursor-not-allowed': currentPageInternalUsers >= totalPagesInternalUsers,
+                            'hover:bg-red-600 hover:text-white cursor-pointer': currentPageInternalUsers < totalPagesInternalUsers
+                          }"
+                        class="border-2 border-red-600 text-red-600 p-1 rounded transition-all duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                          height="16" viewBox="0 0 16 16" fill="none">
+                          <path d="M6.00236 3.99707L10.0025 7.99723L6 11.9998"
+                            stroke="currentcolor" stroke-width="1.3"
+                            stroke-linecap="round" stroke-linejoin="round">
+                          </path>
+                        </svg>
+                      </button>
+                    </li>
+                  </div>
+
+                  <li class="text-md font-medium text-black text-end">
+                    <span class="font-bold text-lg text-red-400">{{
+                      totalInternalUsers }}</span> usuario(s)
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
       } @else {
-        <div
-          class="p-6 rounded-xl bg-white text-center text-gray-500 text-lg font-medium">
-          No hay resultados de usuarios (CNT).
-        </div>
+      <div
+        class="p-6 rounded-xl bg-white text-center text-gray-500 text-lg font-medium">
+        No hay resultados de usuarios (CNT).
+      </div>
       }
+
+      <!-- ==================== USUARIOS EXTERNOS (PERSONAS NECESITADAS) ==================== -->
       <section class="flex items-center justify-between mt-10">
         <app-title class="m-4"
           [className]="'font-sans self-center text-2xl font-semibold sm:text-3xl whitespace-nowrap'"
-          [title]="'Usuarios externos'"></app-title>
-        <app-button (click)="toggleFormPIN()" class="w-xs" [text]="'Añadir usuario externo'"
-          [type]="'submit'"
-          [className]="'px-3 text-md font-semibold w-full py-[10px]'"></app-button>
+          [title]="'Usuarios externos'">
+        </app-title>
+
+        <app-button (click)="togglePersonInNeedForm()" class="w-xs"
+          [text]="'Añadir usuario externo'" [type]="'submit'"
+          [className]="'px-3 text-md font-semibold w-full py-[10px]'">
+        </app-button>
       </section>
 
-      @if (personsInNeed?.length > 0) {
+      @if (personsInNeed.length > 0) {
+      <!-- Tabla de personas necesitadas -->
+      <div class="overflow-x-auto p-6 rounded-xl bg-white">
+        <table class="min-w-full divide-y-2 divide-gray-200">
+          <thead class="ltr:text-left rtl:text-right">
+            <tr class="*:font-medium *:text-gray-900">
+              <th class="px-3 py-2 whitespace-nowrap">Nombre</th>
+              <th class="px-3 py-2 whitespace-nowrap">Email</th>
+              <th class="px-3 py-2 whitespace-nowrap">Teléfono</th>
+              <th class="px-3 py-2 whitespace-nowrap">Acciones</th>
+            </tr>
+          </thead>
 
-        <div class="overflow-x-auto p-6 rounded-xl bg-white">
-          <table class="min-w-full divide-y-2 divide-gray-200">
-            <thead class="ltr:text-left rtl:text-right">
-              <tr class="*:font-medium *:text-gray-900">
-                <th class="px-3 py-2 whitespace-nowrap">Nombre</th>
-                <th class="px-3 py-2 whitespace-nowrap">Email</th>
-                <th class="px-3 py-2 whitespace-nowrap">Teléfono</th>
-                <th class="px-3 py-2 whitespace-nowrap">Acciones</th>
-              </tr>
-            </thead>
+          <tbody class="divide-y divide-gray-200">
+            @for (person of personsInNeed; track person; let i = $index) {
+            <tr class="*:text-gray-900 *:first:font-medium">
+              <td class="px-3 py-2 whitespace-nowrap">{{ person.name }}</td>
+              <td class="px-3 py-2 whitespace-nowrap">{{ person.email }}</td>
+              <td class="px-3 py-2 whitespace-nowrap">{{ person.phone }}</td>
 
-            <tbody class="divide-y divide-gray-200">
-              @for (person of personsInNeed; track person; let i = $index) {
-                <tr class="*:text-gray-900 *:first:font-medium">
-                  <td class="px-3 py-2 whitespace-nowrap">{{ person.name }}</td>
-                  <td class="px-3 py-2 whitespace-nowrap">{{ person.email }}</td>
-                  <td class="px-3 py-2 whitespace-nowrap">{{ person.phone }}</td>
+              <!-- Dropdown de acciones -->
+              <td class="px-3 py-2 whitespace-nowrap relative">
+                <button type="button" (click)="togglePersonInNeedDropdown(i)"
+                  class="inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
+                    viewBox="0 0 12 4" fill="none">
+                    <path
+                      d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
+                      stroke="currentcolor" stroke-width="2.5"
+                      stroke-linecap="round"></path>
+                  </svg>
+                </button>
 
-                  <td class="px-3 py-2 whitespace-nowrap relative">
-                    <button type="button" (click)="openDropdownPIN(i)"
-                      data-target="dropdown-default"
-                      class="dropdown-toggle inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600  ">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
-                        viewBox="0 0 12 4" fill="none">
-                        <path
-                          d="M1.85624 2.00085H1.81458M6.0343 2.00085H5.99263M10.2124 2.00085H10.1707"
-                          stroke="currentcolor" stroke-width="2.5" stroke-linecap="round">
-                        </path>
-                      </svg>
-                    </button>
-                    @if (dropdownOpenPIN[i] === true) {
-                      <ul role="none"
-                        class="py-2 bg-gray-50 dark:bg-gray-900 rounded-md shadow-md absolute top-10 right-4/5 dropdown-menu z-10">
-                        <li (click)="editPersonInNeed(person, i)">
-                          <div role="menuitem"
-                            class="block cursor-pointer mx-2 transition-all .2s ease rounded-md px-6 py-2 text-md text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white">Editar</div>
-                        </li>
-                        <li (click)="openPopup(person.id, i, 'PID')">
-                          <div role="menuitem"
-                            class="block cursor-pointer mx-2 transition-all .2s ease rounded-md px-6 py-2 text-md text-gray-700 hover:bg-rose-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-rose-700 dark:hover:text-white">
-                            Borrar</div>
-                        </li>
-                      </ul>
-                    }
-                  </td>
-              </tr>
-            }
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="4">
-                  <ul
-                    class="w-full flex justify-between items-center gap-3 text-gray-900 w-[max-content]">
-                    <div class="flex justify-center items-center gap-3 text-gray-900 w-[max-content] mt-5">
-                      <li>
-                        <button (click)="pageMove(false, pagedPersonsInNeeds, 'persons')" [disabled]="currentPagePersonsInNeeds <= 1" [ngClass]="{
-                                                                  'opacity-40 cursor-not-allowed': currentPagePersonsInNeeds <= 1,
-                                                                  'cursor-pointer hover:bg-red-600 hover:text-white': currentPagePersonsInNeeds > 1
-                                                                }"
-                          class="border-2 border-red-600 text-red-600 p-1 rounded transition-all duration-300">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                            viewBox="0 0 16 16" fill="none">
-                            <path d="M10.0002 11.9999L6 7.99971L10.0025 3.99719" stroke="currentcolor"
-                              stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-                            </path>
-                          </svg>
-                        </button>
-                      </li>
-
-                      <li class="text-sm font-medium text-black tracking-widest"><span
-                          class="text-red-400 font-bold text-lg">{{ currentPagePersonsInNeeds }}</span>/{{
-                        totalPagesPersonsInNeeds}}</li>
-
-                      <li>
-                        <!-- CAMBIAR STRING POR ENUM -->
-                        <button (click)="pageMove(true, pagedPersonsInNeeds, 'persons')" [disabled]="currentPagePersonsInNeeds >= totalPagesPersonsInNeeds" [ngClass]="{
-                                                        'opacity-40 cursor-not-allowed': currentPagePersonsInNeeds >= totalPagesPersonsInNeeds,
-                                                        'hover:bg-red-600 hover:text-white cursor-pointer': currentPagePersonsInNeeds < totalPagesPersonsInNeeds
-                                                      }"
-                          class="border-2 border-red-600 text-red-600 p-1 rounded transition-all duration-300">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                            viewBox="0 0 16 16" fill="none">
-                            <path d="M6.00236 3.99707L10.0025 7.99723L6 11.9998" stroke="currentcolor"
-                              stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-                            </path>
-                          </svg>
-                        </button>
-                      </li>
+                @if (personInNeedDropdownsOpen[i]) {
+                <ul role="none"
+                  class="py-2 bg-gray-50 dark:bg-gray-900 rounded-md shadow-md absolute top-10 right-4/5 dropdown-menu z-10">
+                  <li (click)="editPersonInNeed(person, i)">
+                    <div role="menuitem"
+                      class="block cursor-pointer mx-2 transition-all .2s ease rounded-md px-6 py-2 text-md text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white">
+                      Editar
                     </div>
-                    <li class="text-md font-medium text-black text-end"><span class="font-bold text-lg text-red-400">{{ totalItemsPersonsInNeeds }}</span> usuario(s)</li>
-                  </ul>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+                  </li>
+                  <li (click)="toggleConfirmationPopup(person.id, i, 'PID')">
+                    <div role="menuitem"
+                      class="block cursor-pointer mx-2 transition-all .2s ease rounded-md px-6 py-2 text-md text-gray-700 hover:bg-rose-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-rose-700">
+                      Borrar
+                    </div>
+                  </li>
+                </ul>
+                }
+              </td>
+            </tr>
+            }
+          </tbody>
+
+          <!-- Paginación externa -->
+          <tfoot>
+            <tr>
+              <td colspan="4">
+                <ul
+                  class="w-full flex justify-between items-center gap-3 text-gray-900 w-[max-content]">
+                  <div
+                    class="flex justify-center items-center gap-3 text-gray-900 w-[max-content] mt-5">
+                    <li>
+                      <button
+                        (click)="changePage(false, personsInNeedPagination, 'persons')"
+                        [disabled]="currentPagePersonsInNeed <= 1" [ngClass]="{
+                            'opacity-40 cursor-not-allowed': currentPagePersonsInNeed <= 1,
+                            'cursor-pointer hover:bg-red-600 hover:text-white': currentPagePersonsInNeed > 1
+                          }"
+                        class="border-2 border-red-600 text-red-600 p-1 rounded transition-all duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                          height="16" viewBox="0 0 16 16" fill="none">
+                          <path d="M10.0002 11.9999L6 7.99971L10.0025 3.99719"
+                            stroke="currentcolor" stroke-width="1.3"
+                            stroke-linecap="round" stroke-linejoin="round">
+                          </path>
+                        </svg>
+                      </button>
+                    </li>
+
+                    <li class="text-sm font-medium text-black tracking-widest">
+                      <span class="text-red-400 font-bold text-lg">{{
+                        currentPagePersonsInNeed }}</span>/
+                      {{ totalPagesPersonsInNeed }}
+                    </li>
+
+                    <li>
+                      <button
+                        (click)="changePage(true, personsInNeedPagination, 'persons')"
+                        [disabled]="currentPagePersonsInNeed >= totalPagesPersonsInNeed"
+                        [ngClass]="{
+                            'opacity-40 cursor-not-allowed': currentPagePersonsInNeed >= totalPagesPersonsInNeed,
+                            'hover:bg-red-600 hover:text-white cursor-pointer': currentPagePersonsInNeed < totalPagesPersonsInNeed
+                          }"
+                        class="border-2 border-red-600 text-red-600 p-1 rounded transition-all duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                          height="16" viewBox="0 0 16 16" fill="none">
+                          <path d="M6.00236 3.99707L10.0025 7.99723L6 11.9998"
+                            stroke="currentcolor" stroke-width="1.3"
+                            stroke-linecap="round" stroke-linejoin="round">
+                          </path>
+                        </svg>
+                      </button>
+                    </li>
+                  </div>
+
+                  <li class="text-md font-medium text-black text-end">
+                    <span class="font-bold text-lg text-red-400">{{
+                      totalPersonsInNeed }}</span> usuario(s)
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
       } @else {
-        <div
-          class="p-6 rounded-xl bg-white text-center text-gray-500 text-lg font-medium">
-          No hay resultados de usuarios externos.
-          </div>
+      <div
+        class="p-6 rounded-xl bg-white text-center text-gray-500 text-lg font-medium">
+        No hay resultados de usuarios externos.
+      </div>
       }
     </div>
   </section>
 </div>
 
+<!-- ====================== POPUP DE CONFIRMACIÓN ====================== -->
 @if (isPopupOpen) {
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-100">
+  <div class="relative p-4 w-full max-w-md max-h-full">
+    <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+      <button (click)="toggleConfirmationPopup()" type="button"
+        class="cursor-pointer absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+        <svg class="w-3 h-3" aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+          <path stroke="currentColor" stroke-linecap="round"
+            stroke-linejoin="round" stroke-width="2"
+            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
+        </svg>
+        <span class="sr-only">Cerrar modal</span>
+      </button>
 
-  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-100">
+      <div class="p-4 md:p-5 text-center">
+        <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"
+          aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+          viewBox="0 0 20 20">
+          <path stroke="currentColor" stroke-linecap="round"
+            stroke-linejoin="round" stroke-width="2"
+            d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path>
+        </svg>
+        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+          ¿Seguro que quieres eliminar este usuario?
+        </h3>
 
-    <div class="relative p-4 w-full max-w-md max-h-full">
-      <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-        <button (click)="openPopup()" type="button"
-          class="cursor-pointer absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-          data-modal-hide="popup-modal">
-          <svg class="w-3 h-3" aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-            <path stroke="currentColor" stroke-linecap="round"
-              stroke-linejoin="round" stroke-width="2"
-              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-          </svg>
-          <span class="sr-only">Cerrar modal</span>
+        <button
+          (click)="deleteUser(selectedUser.id, selectedUser.index, selectedUser.type)"
+          type="button"
+          class="cursor-pointer text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+          Sí, eliminar
         </button>
-        <div class="p-4 md:p-5 text-center">
-          <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"
-            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-            viewBox="0 0 20 20">
-            <path stroke="currentColor" stroke-linecap="round"
-              stroke-linejoin="round" stroke-width="2"
-              d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-          </svg>
-          <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-            ¿Seguro que quieres eliminar este usuario?</h3>
-          <button (click)="deleteUser(userSelected.id, userSelected.index, userSelected.type)" data-modal-hide="popup-modal" type="button"
-            class="cursor-pointer text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-            Si, eliminar
-          </button>
-          <button (click)="openPopup()" data-modal-hide="popup-modal" type="button"
-            class="cursor-pointer py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No,
-            Cancelar</button>
-        </div>
+
+        <button (click)="toggleConfirmationPopup()" type="button"
+          class="cursor-pointer py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+          No, cancelar
+        </button>
       </div>
     </div>
   </div>
-
+</div>
 }
 
-@if (isLoading){
-  <app-loader class="transition-all .3s ease"></app-loader>
-}
-@if (toastData != null) {
-  <app-toast [type]="toastData.type" (closeToast)="closeToast()"
-    [text]="toastData.text" [duration]="toastData.duration"
-    [className]="'transition-all .3s ease'"></app-toast>
+<!-- ====================== LOADER GLOBAL ====================== -->
+@if (isLoading) {
+<app-loader class="transition-all .3s ease"></app-loader>
 }
 
-@if (isFormOpenPIN){
-<!-- Overlay -->
+<!-- ====================== TOAST DE NOTIFICACIONES ====================== -->
+@if (toastData) {
+<app-toast [type]="toastData.type" (closeToast)="closeToast()"
+  [text]="toastData.text" [duration]="toastData.duration"
+  [className]="'transition-all .3s ease'">
+</app-toast>
+}
+
+<!-- ====================== MODAL FORMULARIO PERSONA NECESITADA ====================== -->
+@if (isPersonInNeedFormOpen) {
 <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-100">
-  <!-- Contenido del modal -->
   <section
     class="bg-white rounded-xl p-6 max-w-4xl w-[max-content] mx-4 shadow-lg relative max-h-[90vh] overflow-y-auto overflow-x-hidden">
-    <app-icon (click)="toggleFormPIN()" [icon]="'x'"
-      [className]="'absolute right-2 top-2 cursor-pointer w-5 h-5'"></app-icon>
-    <div class="flex items-center justify-between mb-5 w-[max-content]">
-      <app-dynamic-form [titleForm]="titleFormPIN"
-        [subtitleForm]="subtitleFormPIN"
-        [fields]="PINFields" [className]="'w-full'"
-        [endpointUrl]="PINEndpoint" [method]="methodPIN"
-        [backButton]="backButton" [submitButton]="addButtonPIN"
-        (submitSuccess)="onSubmitSuccessPIN($event, methodPIN)"
-        (submitError)="onSubmitErrorPIN($event)" (loading)="setLoading($event)">
-      </app-dynamic-form>
-    </div>
+    <app-icon (click)="togglePersonInNeedForm()" [icon]="'x'"
+      [className]="'absolute right-2 top-2 cursor-pointer w-5 h-5'">
+    </app-icon>
 
+    <app-dynamic-form [titleForm]="personInNeedFormTitle"
+      [subtitleForm]="personInNeedFormSubtitle"
+      [fields]="personInNeedFormFields" [className]="'w-full'"
+      [endpointUrl]="personInNeedEndpoint" [method]="personInNeedHttpMethod"
+      [backButton]="backButtonText" [submitButton]="addPersonInNeedButtonText"
+      (submitSuccess)="onPersonInNeedSubmitSuccess($event, personInNeedHttpMethod)"
+      (submitError)="onFormError($event)" (loading)="setLoading($event)">
+    </app-dynamic-form>
   </section>
 </div>
 }
 
-
-@if (isFormOpenHelpers){
-<!-- Overlay -->
+<!-- ====================== MODAL FORMULARIO USUARIO INTERNO ====================== -->
+@if (isInternalUserFormOpen) {
 <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-100">
-  <!-- Contenido del modal -->
   <section
     class="bg-white rounded-xl p-6 max-w-4xl w-[max-content] mx-4 shadow-lg relative max-h-[90vh] overflow-y-auto overflow-x-hidden">
-    <app-icon (click)="toggleFormHelpers()" [icon]="'x'"
-      [className]="'absolute right-2 top-2 cursor-pointer w-5 h-5'"></app-icon>
-    <div class="flex items-center justify-between mb-5 w-[max-content]">
-      <app-dynamic-form [titleForm]="titleFormHelpers"
-        [subtitleForm]="subtitleFormHelpers"
-        [fields]="HelperFields" [className]="'w-full'" [endpointUrl]="HelperEndpoint"
-        [method]="'POST'" [backButton]="backButton" [submitButton]="addButtonHelpers"
-        (submitSuccess)="onSubmitSuccessHelpers($event)"
-        (submitError)="onSubmitErrorHelpers($event)" (loading)="setLoading($event)">
-      </app-dynamic-form>
-    </div>
+    <app-icon (click)="toggleInternalUserForm()" [icon]="'x'"
+      [className]="'absolute right-2 top-2 cursor-pointer w-5 h-5'">
+    </app-icon>
 
+    <app-dynamic-form [titleForm]="internalUserFormTitle"
+      [subtitleForm]="internalUserFormSubtitle"
+      [fields]="internalUserFormFields" [className]="'w-full'"
+      [endpointUrl]="internalUserEndpoint" [method]="'POST'"
+      [backButton]="backButtonText" [submitButton]="addInternalUserButtonText"
+      (submitSuccess)="onInternalUserSubmitSuccess($event)"
+      (submitError)="onFormError($event)" (loading)="setLoading($event)">
+    </app-dynamic-form>
   </section>
 </div>
 }
-
