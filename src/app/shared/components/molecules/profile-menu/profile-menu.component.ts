@@ -25,10 +25,8 @@ export class ProfileMenuComponent {
       : '/' + this.router.url;
 
     const token = sessionStorage.getItem('token');
-    if (token) {
-      this.userInfo = jwtDecode(token);
-      console.log(this.userInfo); // contiene los datos del usuario
-    }
+    if (token) this.userInfo = jwtDecode(token);
+
   }
 
   toggleTabProfile: boolean = false;

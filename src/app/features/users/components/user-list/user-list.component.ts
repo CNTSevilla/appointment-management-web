@@ -16,7 +16,10 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { IconComponent } from '../../../../shared/components/atoms/icon/icon.component';
-
+import { Pagination } from '../../../../core/models/pagination.model';
+import { GETPaginationHelper, GETPaginationPIN, Helper, PIN, SelectedUser, UserJWT } from '../../../../core/models/users';
+import { jwtDecode } from 'jwt-decode';
+import { getInitial, getBackgroundColor } from '../../../../core/utils/string-utils';
 /**
  * Componente para gestionar la lista de usuarios internos (CNT) y externos (personas necesitadas).
  * Permite filtrar, paginar, crear, editar y eliminar usuarios de ambos tipos.
@@ -38,32 +41,36 @@ import { IconComponent } from '../../../../shared/components/atoms/icon/icon.com
   styleUrl: './user-list.component.scss'
 })
 export class UserListComponent {
+  //
+  getInitial = getInitial;
+  getBackgroundColor = getBackgroundColor;
+
   /** Servicio inyectado para realizar peticiones HTTP */
   private readonly requestService = inject(RequestService);
 
   /** Lista completa de usuarios internos (CNT) */
-  public internalUsers: any[] = [];
+  public helperUsers: Helper[] = [];
 
   /** Configuración de paginación para usuarios internos */
-  public internalUsersPagination = { page: 0, size: 5 };
+  public helperUsersPagination: Pagination = { page: 0, size: 5 };
 
   /** Configuración de paginación para personas necesitadas */
-  public personsInNeedPagination = { page: 0, size: 5 };
+  public personsInNeedPagination: Pagination = { page: 0, size: 5 };
 
   /** Usuario seleccionado para edición o eliminación */
-  public selectedUser = { id: -1, index: -1, type: '' };
+  public selectedUser: SelectedUser = { id: -1, index: -1, type: '' };
 
   /** Total de usuarios internos */
-  public totalInternalUsers: number = 0;
+  public totalHelperUsers: number = 0;
 
   /** Total de páginas para usuarios internos */
-  public totalPagesInternalUsers: number = 0;
+  public totalPagesHelperUsers: number = 0;
 
   /** Página actual de usuarios internos */
-  public currentPageInternalUsers: number = 0;
+  public currentPageHelperUsers: number = 0;
 
   /** Lista completa de personas necesitadas */
-  public personsInNeed: any[] = [];
+  public personsInNeed: PIN[] = [];
 
   /** Total de personas necesitadas */
   public totalPersonsInNeed: number = 0;
@@ -84,7 +91,7 @@ export class UserListComponent {
   public backButtonText = '';
 
   /** Endpoint para obtener todos los usuarios internos */
-  public readonly internalUsersEndpoint = '/helper/all';
+  public readonly helperUsersEndpoint = '/helper/all';
 
   /** Endpoint para obtener todas las personas necesitadas */
   private readonly personsInNeedEndpoint = '/person_in_need/all';
@@ -96,10 +103,10 @@ export class UserListComponent {
   public isPersonInNeedFormOpen = false;
 
   /** Indica si el formulario de usuario interno está abierto */
-  public isInternalUserFormOpen = false;
+  public isHelperUserFormOpen = false;
 
   /** Estado de los dropdowns para usuarios internos */
-  public internalUserDropdownsOpen: boolean[] = [];
+  public helperUserDropdownsOpen: boolean[] = [];
 
   /** Estado de los dropdowns para personas necesitadas */
   public personInNeedDropdownsOpen: boolean[] = [];
@@ -148,83 +155,74 @@ export class UserListComponent {
   ];
 
   /** Botón para añadir usuario interno */
-  public addInternalUserButtonText = 'Añadir usuario';
+  public addHelperUserButtonText = 'Añadir usuario';
 
   /** Título del formulario de usuario interno */
-  public internalUserFormTitle = 'Añadir nuevo usuario (CNT)';
+  public helperUserFormTitle = 'Añadir nuevo usuario (CNT)';
 
   /** Subtítulo del formulario de usuario interno */
-  public internalUserFormSubtitle = 'Rellena los datos para añadir un nuevo usuario interno (CNT)';
+  public helperUserFormSubtitle = 'Rellena los datos para añadir un nuevo usuario interno (CNT)';
 
   /** Endpoint para usuarios internos */
-  public readonly internalUserEndpoint = '/helper';
+  public readonly helperUserEndpoint = '/helper';
 
   /** Indica si el popup de confirmación está abierto */
   public isPopupOpen = false;
 
   /** Campos del formulario de usuario interno */
-  public internalUserFormFields: FormField[] = [
+  public helperUserFormFields: FormField[] = [
     { name: 'name', label: 'Nombre', type: 'text', placeholder: 'Jesús Pérez', required: true },
     { name: 'email', label: 'Correo electrónico', type: 'email', placeholder: 'example@gmail.com', required: true },
     { name: 'username', label: 'Nombre de usuario', type: 'text', placeholder: 'jesus.perez', required: true },
     { name: 'phone', label: 'Nº de teléfono', type: 'tel', placeholder: '000 000 000', required: true },
-    {
-      name: 'roles',
-      label: 'Rol',
-      type: 'select',
-      required: true,
-      options: [
-        { value: 'SYSTEM', label: 'Helper' },
-        { value: 'ADMIN', label: 'Administrador' },
-        { value: 'USER', label: 'Usuario normal' },
-      ],
-    },
     { name: 'clearPassword', label: 'Contraseña', type: 'password', placeholder: '********', required: true, min: 6 }
   ];
 
-  constructor(
-    private readonly http: HttpClient,
-    private readonly router: Router
-  ) {
-    this.loadUsers(this.internalUsersPagination, this.personsInNeedPagination);
+  /** Estado de los dropdowns para personas necesitadas */
+  public userInfo: UserJWT = {};
+
+  constructor(public router : Router) {
+    const token = sessionStorage.getItem('token');
+    if (token) this.userInfo = jwtDecode(token);
++   this.loadUsers(this.helperUsersPagination, this.personsInNeedPagination);
   }
 
   /**
    * Cambia de página en la paginación.
    * @param isNext Indica si se avanza (true) o retrocede (false)
    * @param paginationObject Objeto de paginación a modificar
-   * @param target Tipo de lista: 'internal' o 'persons'
+   * @param target Tipo de lista: 'helper' o 'persons'
    */
-  public changePage(isNext: boolean, paginationObject: any, target: 'internal' | 'persons'): void {
+  public changePage(isNext: boolean, paginationObject: Pagination, target: 'helper' | 'persons'): void {
     paginationObject.page = isNext ? paginationObject.page + 1 : paginationObject.page - 1;
-    const isInternal = target === 'internal';
+    const isHelper = target === 'helper';
     this.loadUsers(
-      isInternal ? paginationObject : this.internalUsersPagination,
-      isInternal ? this.personsInNeedPagination : paginationObject
+      isHelper ? paginationObject : this.helperUsersPagination,
+      isHelper ? this.personsInNeedPagination : paginationObject
     );
   }
 
   /**
    * Carga simultáneamente usuarios internos y personas necesitadas con paginación.
-   * @param internalPagination Paginación para usuarios internos
+   * @param helperPagination Paginación para usuarios internos
    * @param personsPagination Paginación para personas necesitadas
    */
-  private loadUsers(internalPagination: any, personsPagination: any): void {
+  private loadUsers(helperPagination: Pagination, personsPagination: Pagination): void {
     forkJoin({
-      internalUsers: this.requestService.get<any>(
-        `${this.internalUsersEndpoint}?page=${internalPagination.page}&size=${internalPagination.size}`
+      helperUsers: this.requestService.get<GETPaginationHelper>(
+        `${this.helperUsersEndpoint}?page=${helperPagination.page}&size=${helperPagination.size}`
       ),
-      personsInNeed: this.requestService.get<any>(
+      personsInNeed: this.requestService.get<GETPaginationPIN>(
         `${this.personsInNeedEndpoint}?page=${personsPagination.page}&size=${personsPagination.size}`
       )
     }).subscribe({
-      next: ({ internalUsers, personsInNeed }) => {
+      next: ({ helperUsers, personsInNeed }) => {
         // Procesar usuarios internos
-        this.internalUsers = internalUsers.content;
-        this.totalInternalUsers = internalUsers.totalElements;
-        this.totalPagesInternalUsers = internalUsers.totalPages;
-        this.currentPageInternalUsers = internalUsers.number + 1;
-        this.internalUsersPagination.page = internalUsers.number;
+        this.helperUsers = helperUsers.content;
+        this.totalHelperUsers = helperUsers.totalElements;
+        this.totalPagesHelperUsers = helperUsers.totalPages;
+        this.currentPageHelperUsers = helperUsers.number + 1;
+        this.helperUsersPagination.page = helperUsers.number;
 
         // Procesar personas necesitadas
         this.personsInNeed = personsInNeed.content;
@@ -234,10 +232,10 @@ export class UserListComponent {
         this.personsInNeedPagination.page = personsInNeed.number;
 
         // Inicializar dropdowns
-        this.internalUserDropdownsOpen = this.internalUsers.map(() => false);
+        this.helperUserDropdownsOpen = this.helperUsers.map(() => false);
         this.personInNeedDropdownsOpen = this.personsInNeed.map(() => false);
 
-        console.log('Usuarios internos:', internalUsers);
+        console.log('Usuarios internos:', helperUsers);
         console.log('Personas necesitadas:', personsInNeed);
       },
       error: (error) => {
@@ -283,8 +281,8 @@ export class UserListComponent {
    * Maneja el éxito al crear un usuario interno (CNT).
    * @param response Datos del usuario creado
    */
-  public onInternalUserSubmitSuccess(response: any): void {
-    const newUser = {
+  public onHelperUserSubmitSuccess(response: Helper): void {
+    const newUser: Helper = {
       id: response.id,
       name: response.name,
       email: response.email,
@@ -294,11 +292,11 @@ export class UserListComponent {
       createdAt: response.createdAt
     };
 
-    this.internalUsers.push(newUser);
-    this.totalInternalUsers += 1;
-    this.resetInternalUserForm();
-    this.internalUserDropdownsOpen.push(false);
-    this.isInternalUserFormOpen = false;
+    this.helperUsers.push(newUser);
+    this.totalHelperUsers += 1;
+    this.resetHelperUserForm();
+    this.helperUserDropdownsOpen.push(false);
+    this.isHelperUserFormOpen = false;
     this.showSuccessToast('Usuario (CNT) añadido correctamente.');
   }
 
@@ -333,7 +331,7 @@ export class UserListComponent {
    * @param type 'PID' para persona necesitada, 'Helper' para usuario interno
    */
   public deleteUser(id: number, index: number, type: string): void {
-    const endpoint = type === 'PID' ? `${this.personInNeedEndpoint}/${id}` : `${this.internalUserEndpoint}/${id}`;
+    const endpoint = type === 'PID' ? `${this.personInNeedEndpoint}/${id}` : `${this.helperUserEndpoint}/${id}`;
     const successMessage = type === 'PID'
       ? 'Persona necesitada eliminada correctamente.'
       : 'Usuario (CNT) eliminado correctamente.';
@@ -351,10 +349,10 @@ export class UserListComponent {
             this.changePage(false, this.personsInNeedPagination, 'persons');
           }
         } else {
-          this.internalUsers.splice(index, 1);
-          this.totalInternalUsers -= 1;
-          if (this.internalUsers.length === 0 && this.currentPageInternalUsers > 1) {
-            this.changePage(false, this.internalUsersPagination, 'internal');
+          this.helperUsers.splice(index, 1);
+          this.totalHelperUsers -= 1;
+          if (this.helperUsers.length === 0 && this.currentPageHelperUsers > 1) {
+            this.changePage(false, this.helperUsersPagination, 'helper');
           }
         }
         this.showSuccessToast(successMessage);
@@ -371,8 +369,8 @@ export class UserListComponent {
    * @param person Datos de la persona
    * @param index Índice en la lista
    */
-  public editPersonInNeed(person: any, index: number): void {
-    this.selectedUser = { id: person.id, index, type: 'PID' };
+  public editPersonInNeed(person: PIN, index: number): void {
+    this.selectedUser = { id: person.id || 0, index, type: 'PID' };
     this.isPersonInNeedFormOpen = true;
     this.personInNeedEndpoint = `/person_in_need/${person.id}`;
     this.addPersonInNeedButtonText = 'Editar usuario';
@@ -393,7 +391,7 @@ export class UserListComponent {
    * @param data Objeto con los datos
    * @returns Valor del campo
    */
-  private getFieldValue(fieldName: string, data: any): string {
+  private getFieldValue(fieldName: string, data: PIN): string {
     switch (fieldName) {
       case 'name': return data.name || '';
       case 'email': return data.email || '';
@@ -425,16 +423,16 @@ export class UserListComponent {
   /**
    * Alterna la visibilidad del formulario de usuario interno.
    */
-  public toggleInternalUserForm(): void {
-    this.isInternalUserFormOpen = !this.isInternalUserFormOpen;
+  public toggleHelperUserForm(): void {
+    this.isHelperUserFormOpen = !this.isHelperUserFormOpen;
   }
 
   /**
    * Abre o cierra el dropdown de un usuario interno.
    * @param index Índice del dropdown
    */
-  public toggleInternalUserDropdown(index: number): void {
-    this.internalUserDropdownsOpen = this.internalUserDropdownsOpen.map((open, i) =>
+  public toggleHelperUserDropdown(index: number): void {
+    this.helperUserDropdownsOpen = this.helperUserDropdownsOpen.map((open, i) =>
       i === index ? !open : false
     );
   }
@@ -475,8 +473,8 @@ export class UserListComponent {
     }));
   }
 
-  private resetInternalUserForm(): void {
-    this.internalUserFormFields = this.internalUserFormFields.map(field => ({
+  private resetHelperUserForm(): void {
+    this.helperUserFormFields = this.helperUserFormFields.map(field => ({
       ...field,
       value: ''
     }));

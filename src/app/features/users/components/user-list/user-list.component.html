@@ -7,7 +7,7 @@
   <app-dynamic-form [titleForm]="'Filtrar usuarios'"
     [subtitleForm]="'Rellena los campos para filtrar los usuarios'"
     [fields]="filterFormFields" [className]="'w-full px-24 py-12 bg-gray-50'"
-    [endpointUrl]="internalUsersEndpoint" [method]="'GET'"
+    [endpointUrl]="helperUsersEndpoint" [method]="'GET'"
     [backButton]="backButtonText" [submitButton]="filterButtonText"
     [isFilterForm]="true" (submitSuccess)="onFilterSubmitSuccess($event)"
     (submitError)="onFormError($event)" (loading)="setLoading($event)">
@@ -24,32 +24,40 @@
           [title]="'Usuarios (CNT)'">
         </app-title>
 
-        <app-button (click)="toggleInternalUserForm()" class="w-xs"
+        <app-button (click)="toggleHelperUserForm()" class="w-xs"
           [text]="'Añadir usuario (CNT)'" [type]="'submit'"
           [className]="'px-3 text-md font-semibold w-full py-[10px]'">
         </app-button>
       </section>
 
-      @if (internalUsers.length > 0) {
+      @if (helperUsers.length > 0) {
       <!-- Tabla de usuarios internos -->
       <div class="overflow-x-auto p-6 rounded-xl bg-white">
         <table class="min-w-full divide-y-2 divide-gray-200">
           <thead class="ltr:text-left rtl:text-right">
             <tr class="*:font-medium *:text-gray-900">
-              <th class="px-3 py-2 whitespace-nowrap">Nombre</th>
-              <th class="px-3 py-2 whitespace-nowrap">Email</th>
-              <th class="px-3 py-2 whitespace-nowrap">Nombre de usuario</th>
-              <th class="px-3 py-2 whitespace-nowrap">Teléfono</th>
-              <th class="px-3 py-2 whitespace-nowrap">Fecha de creación</th>
-              <th class="px-3 py-2 whitespace-nowrap">Rol</th>
-              <th class="px-3 py-2 whitespace-nowrap">Acciones</th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Nombre</th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Email</th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Nombre de usuario</th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Teléfono</th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Fecha de creación</th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Rol</th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Acciones</th>
             </tr>
           </thead>
 
           <tbody class="divide-y divide-gray-200">
-            @for (user of internalUsers; track user; let i = $index) {
-            <tr class="*:text-gray-900 *:first:font-medium">
-              <td class="px-3 py-2 whitespace-nowrap">{{ user.name }}</td>
+            @for (user of helperUsers; track user; let i = $index) {
+            <tr class="*:text-gray-900 *:first:font-medium"
+            [ngClass]="{'bg-gray-100': user.id === userInfo.id }">
+              <td class="px-3 py-2 whitespace-nowrap flex items-center gap-2">
+                <div
+                  class="w-8 h-8 rounded-full text-white font-bold flex items-center justify-center text-sm"
+                  [ngStyle]="{ 'background-color': getBackgroundColor(user.name) }">
+                  {{ getInitial(user.name) }}
+                </div>
+                {{ user.name }} {{ user.id === userInfo.id ? '(TÚ)' :  '' }}
+              </td>
               <td class="px-3 py-2 whitespace-nowrap">{{ user.email }}</td>
               <td class="px-3 py-2 whitespace-nowrap">{{ user.username }}</td>
               <td class="px-3 py-2 whitespace-nowrap">{{ user.phone }}</td>
@@ -58,9 +66,9 @@
               </td>
               <td class="px-3 py-2 whitespace-nowrap">
                 <span [ngClass]="
-                        user.role[0] === 'ADMIN' ? 'inline-flex items-center rounded-md bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 inset-ring inset-ring-red-400/20' :
-                        user.role[0] === 'SYSTEM' ? 'inline-flex items-center rounded-md bg-yellow-400/10 px-2 py-1 text-xs font-medium text-yellow-500 inset-ring inset-ring-yellow-400/20' :
-                        user.role[0] === 'USER' ? 'inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 inset-ring inset-ring-gray-400/20' :
+                        user.role?.[0] === 'ADMIN' ? 'inline-flex items-center rounded-md bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 inset-ring inset-ring-red-400/20' :
+                        user.role?.[0] === 'SYSTEM' ? 'inline-flex items-center rounded-md bg-yellow-400/10 px-2 py-1 text-xs font-medium text-yellow-500 inset-ring inset-ring-yellow-400/20' :
+                        user.role?.[0] === 'USER' ? 'inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 inset-ring inset-ring-gray-400/20' :
                         'inline-flex items-center rounded-md bg-gray-200 px-2 py-1 text-xs font-medium text-gray-600'
                       ">
                   {{ user.role }}
@@ -69,8 +77,8 @@
 
               <!-- Dropdown de acciones -->
               <td class="px-3 py-2 whitespace-nowrap relative">
-                <button type="button" (click)="toggleInternalUserDropdown(i)"
-                  class="inline-flex justify-center py-2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600">
+                <button type="button" (click)="toggleHelperUserDropdown(i)"
+                  class="inline-flex justify-center py-HUserDro2.5 px-1 items-center gap-2 text-sm text-black rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:text-purple-600">
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="4"
                     viewBox="0 0 12 4" fill="none">
                     <path
@@ -80,16 +88,25 @@
                   </svg>
                 </button>
 
-                @if (internalUserDropdownsOpen[i]) {
-                <ul role="none"
-                  class="py-2 bg-gray-50 dark:bg-gray-900 rounded-md shadow-md absolute top-10 right-2/3 dropdown-menu z-10">
-                  <li (click)="toggleConfirmationPopup(user.id, i, 'Helper')">
-                    <div role="menuitem"
-                      class="block cursor-pointer mx-2 transition-all .2s ease rounded-md px-6 py-2 text-md text-gray-700 hover:bg-rose-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-rose-700">
-                      Borrar
-                    </div>
-                  </li>
-                </ul>
+                @if (helperUserDropdownsOpen[i]) {
+                  <ul role="none"
+                    class="py-2 bg-gray-50 dark:bg-gray-900 rounded-md shadow-md absolute top-10 right-2/3 dropdown-menu z-10">
+                    @if (user.id !== userInfo.id) {
+                      <li (click)="toggleConfirmationPopup(user.id, i, 'Helper')">
+                        <div role="menuitem"
+                          class="block cursor-pointer mx-2 transition-all .2s ease rounded-md px-6 py-2 text-md text-gray-700 hover:bg-rose-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-rose-700">
+                          Borrar
+                        </div>
+                      </li>
+                    } @else {
+                      <li (click)="router.navigate(['/users/me'])">
+                        <div role="menuitem"
+                          class="block cursor-pointer mx-2 transition-all .2s ease rounded-md px-4 py-2 text-md text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white">
+                          Ir al perfil
+                        </div>
+                      </li>
+                    }
+                  </ul>
                 }
               </td>
             </tr>
@@ -106,10 +123,10 @@
                     class="flex justify-center items-center gap-3 text-gray-900 w-[max-content] mt-5">
                     <li>
                       <button
-                        (click)="changePage(false, internalUsersPagination, 'internal')"
-                        [disabled]="currentPageInternalUsers <= 1" [ngClass]="{
-                            'opacity-40 cursor-not-allowed': currentPageInternalUsers <= 1,
-                            'cursor-pointer hover:bg-red-600 hover:text-white': currentPageInternalUsers > 1
+                        (click)="changePage(false, helperUsersPagination, 'helper')"
+                        [disabled]="currentPageHelperUsers <= 1" [ngClass]="{
+                            'opacity-40 cursor-not-allowed': currentPageHelperUsers <= 1,
+                            'cursor-pointer hover:bg-red-600 hover:text-white': currentPageHelperUsers > 1
                           }"
                         class="border-2 border-red-600 text-red-600 p-1 rounded transition-all duration-300">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16"
@@ -124,17 +141,17 @@
 
                     <li class="text-sm font-medium text-black tracking-widest">
                       <span class="text-red-400 font-bold text-lg">{{
-                        currentPageInternalUsers }}</span>/
-                      {{ totalPagesInternalUsers }}
+                        currentPageHelperUsers }}</span>/
+                      {{ totalPagesHelperUsers }}
                     </li>
 
                     <li>
                       <button
-                        (click)="changePage(true, internalUsersPagination, 'internal')"
-                        [disabled]="currentPageInternalUsers >= totalPagesInternalUsers"
+                        (click)="changePage(true, helperUsersPagination, 'helper')"
+                        [disabled]="currentPageHelperUsers >= totalPagesHelperUsers"
                         [ngClass]="{
-                            'opacity-40 cursor-not-allowed': currentPageInternalUsers >= totalPagesInternalUsers,
-                            'hover:bg-red-600 hover:text-white cursor-pointer': currentPageInternalUsers < totalPagesInternalUsers
+                            'opacity-40 cursor-not-allowed': currentPageHelperUsers >= totalPagesHelperUsers,
+                            'hover:bg-red-600 hover:text-white cursor-pointer': currentPageHelperUsers < totalPagesHelperUsers
                           }"
                         class="border-2 border-red-600 text-red-600 p-1 rounded transition-all duration-300">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16"
@@ -150,7 +167,7 @@
 
                   <li class="text-md font-medium text-black text-end">
                     <span class="font-bold text-lg text-red-400">{{
-                      totalInternalUsers }}</span> usuario(s)
+                      totalHelperUsers }}</span> usuario(s)
                   </li>
                 </ul>
               </td>
@@ -194,6 +211,14 @@
           <tbody class="divide-y divide-gray-200">
             @for (person of personsInNeed; track person; let i = $index) {
             <tr class="*:text-gray-900 *:first:font-medium">
+              <td class="px-3 py-2 whitespace-nowrap flex items-center gap-2">
+                <div
+                  class="w-8 h-8 rounded-full text-white font-bold flex items-center justify-center text-sm"
+                  [ngStyle]="{ 'background-color': getBackgroundColor(person.name) }">
+                  {{ getInitial(person.name) }}
+                </div>
+                {{ person.name }}
+              </td>
               <td class="px-3 py-2 whitespace-nowrap">{{ person.name }}</td>
               <td class="px-3 py-2 whitespace-nowrap">{{ person.email }}</td>
               <td class="px-3 py-2 whitespace-nowrap">{{ person.phone }}</td>
@@ -385,20 +410,20 @@
 }
 
 <!-- ====================== MODAL FORMULARIO USUARIO INTERNO ====================== -->
-@if (isInternalUserFormOpen) {
+@if (isHelperUserFormOpen) {
 <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-100">
   <section
     class="bg-white rounded-xl p-6 max-w-4xl w-[max-content] mx-4 shadow-lg relative max-h-[90vh] overflow-y-auto overflow-x-hidden">
-    <app-icon (click)="toggleInternalUserForm()" [icon]="'x'"
+    <app-icon (click)="toggleHelperUserForm()" [icon]="'x'"
       [className]="'absolute right-2 top-2 cursor-pointer w-5 h-5'">
     </app-icon>
 
-    <app-dynamic-form [titleForm]="internalUserFormTitle"
-      [subtitleForm]="internalUserFormSubtitle"
-      [fields]="internalUserFormFields" [className]="'w-full'"
-      [endpointUrl]="internalUserEndpoint" [method]="'POST'"
-      [backButton]="backButtonText" [submitButton]="addInternalUserButtonText"
-      (submitSuccess)="onInternalUserSubmitSuccess($event)"
+    <app-dynamic-form [titleForm]="helperUserFormTitle"
+      [subtitleForm]="helperUserFormSubtitle"
+      [fields]="helperUserFormFields" [className]="'w-full'"
+      [endpointUrl]="helperUserEndpoint" [method]="'POST'"
+      [backButton]="backButtonText" [submitButton]="addHelperUserButtonText"
+      (submitSuccess)="onHelperUserSubmitSuccess($event)"
       (submitError)="onFormError($event)" (loading)="setLoading($event)">
     </app-dynamic-form>
   </section>
