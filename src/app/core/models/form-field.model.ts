@@ -28,6 +28,8 @@ export interface FormField {
   max?: number;
   step?: number;
   multiple?: boolean;
+  withUserImage?: boolean;
+  userType?: 'helper' | 'person_in_need';
 
   options?: { label: string; value: any }[]; // para select y radio
 }
