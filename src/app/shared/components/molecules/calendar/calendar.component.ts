@@ -28,7 +28,7 @@ export class CalendarComponent {
   appointmentsFields: FormField[] = [
     {
       name: 'date_time',
-      label: 'Fecha y hora',
+      label: 'Fecha',
       type: 'datetime-local',
       required: true,
     },
