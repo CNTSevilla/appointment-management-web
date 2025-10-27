@@ -19,7 +19,8 @@ import { IconComponent } from '../../../../shared/components/atoms/icon/icon.com
 import { Pagination } from '../../../../core/models/pagination.model';
 import { GETPaginationHelper, GETPaginationPIN, Helper, PIN, SelectedUser, UserJWT } from '../../../../core/models/users';
 import { jwtDecode } from 'jwt-decode';
-import { getInitial, getBackgroundColor } from '../../../../core/utils/string-utils';
+import { getInitial } from '../../../../core/utils/string-utils';
+import { getBackgroundColor, getAvatarGradient } from '../../../../core/utils/color-utils';
 /**
  * Componente para gestionar la lista de usuarios internos (CNT) y externos (personas necesitadas).
  * Permite filtrar, paginar, crear, editar y eliminar usuarios de ambos tipos.
@@ -44,6 +45,7 @@ export class UserListComponent {
   //
   getInitial = getInitial;
   getBackgroundColor = getBackgroundColor;
+  getAvatarGradient = getAvatarGradient;
 
   /** Servicio inyectado para realizar peticiones HTTP */
   private readonly requestService = inject(RequestService);
@@ -219,6 +221,8 @@ export class UserListComponent {
       next: ({ helperUsers, personsInNeed }) => {
         // Procesar usuarios internos
         this.helperUsers = helperUsers.content;
+        console.log(this.helperUsers);
+        console.log(this.userInfo)
         this.totalHelperUsers = helperUsers.totalElements;
         this.totalPagesHelperUsers = helperUsers.totalPages;
         this.currentPageHelperUsers = helperUsers.number + 1;
@@ -239,8 +243,19 @@ export class UserListComponent {
         console.log('Personas necesitadas:', personsInNeed);
       },
       error: (error) => {
-        console.error('Error al cargar usuarios:', error);
+        console.error('Error al cargar usuarios:', error.error.localizedMessage);
         this.showErrorToast('Error al cargar los usuarios. Inténtelo de nuevo.');
+        // 🧠 Comprueba si contiene "JWT expired" (puedes hacerlo más robusto con includes)
+        if (!error.error.localizedMessage.includes('JWT expired')) {
+          this.showErrorToast('Error al cargar los usuarios. Inténtelo de nuevo.');
+
+        } else {
+          this.showErrorToast('Usuario expirado, necesitas volver a iniciar sesión.');
+          setTimeout(() => {
+            this.router.navigate(['/auth/login']);
+          }, 3000);
+        }
+
       }
     });
   }
@@ -333,10 +348,10 @@ export class UserListComponent {
   public deleteUser(id: number, index: number, type: string): void {
     const endpoint = type === 'PID' ? `${this.personInNeedEndpoint}/${id}` : `${this.helperUserEndpoint}/${id}`;
     const successMessage = type === 'PID'
-      ? 'Persona necesitada eliminada correctamente.'
+      ? 'Usuario externo eliminado correctamente.'
       : 'Usuario (CNT) eliminado correctamente.';
     const errorMessage = type === 'PID'
-      ? 'Error al eliminar la persona necesitada.'
+      ? 'Error al eliminar el usuario externo.'
       : 'Error al eliminar el usuario (CNT).';
 
     this.requestService.delete(endpoint).subscribe({

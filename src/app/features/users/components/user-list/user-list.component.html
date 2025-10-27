@@ -50,10 +50,12 @@
             @for (user of helperUsers; track user; let i = $index) {
             <tr class="*:text-gray-900 *:first:font-medium"
             [ngClass]="{'bg-gray-100': user.id === userInfo.id }">
+            {{ user.id }}
+            {{ "- " + user.id }}
               <td class="px-3 py-2 whitespace-nowrap flex items-center gap-2">
                 <div
                   class="w-8 h-8 rounded-full text-white font-bold flex items-center justify-center text-sm"
-                  [ngStyle]="{ 'background-color': getBackgroundColor(user.name) }">
+                  [ngStyle]="{ 'background': getAvatarGradient() }">
                   {{ getInitial(user.name) }}
                 </div>
                 {{ user.name }} {{ user.id === userInfo.id ? '(TÚ)' :  '' }}
