@@ -16,6 +16,13 @@ export class ToastComponent {
 
   @Output() closeToast = new EventEmitter<void>();
 
+  public isHeaderVisible: boolean = true;
+
+  constructor() {
+    const token = sessionStorage.getItem('token');
+    this.isHeaderVisible = token ? true : false;
+  }
+
   closeToastClick(): void {
     this.closeToast.emit();
   }

@@ -6,8 +6,11 @@
         class="flex cursor-pointer text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
         aria-expanded="false" data-dropdown-toggle="dropdown-user">
         <span class="sr-only">Open user menu</span>
-        <img class="w-8 h-8 rounded-full" src="assets/images/icons/user.jpg"
-          alt="user photo">
+        <div
+          class="w-8 h-8 rounded-full text-white font-bold flex items-center justify-center text-lg"
+          [ngStyle]="{ 'background': getAvatarGradient() }">
+          {{ getInitial(userInfo.sub) }}
+        </div>
       </button>
     </div>
     <div [class]="toggleTabProfile ? '' : 'hidden'"

@@ -18,9 +18,9 @@
           <app-dynamic-input [field]="field" [isFilterForm]="isFilterForm" [form]="form"></app-dynamic-input>
         }
         @if (isFilterForm) {
-        <app-button class="relative w-1/4"
+        <app-button class="relative w-[max-content] min-w-[190px]"
           [text]="(submitButton && submitButton) === '' ? 'Enviar' : submitButton"
-          [type]="'submit'" [className]="'px-3 py-[5px] text-md font-semibold w-full'"
+          [type]="'submit'" [className]="'px-3 py-[5px] min-h-[55px] text-md font-semibold w-full'"
           [disabled]="!form.valid"></app-button>
         }
       </article>

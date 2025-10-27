@@ -1,4 +1,6 @@
-<div class="absolute top-4 right-4 flex flex-col">
+<div
+  [ngClass]="{ 'top-20': isHeaderVisible, 'top-4': !isHeaderVisible }"
+  class="fixed flex right-4 flex-col z-[99]">
 @if (type == "success") {
   <div id="toast-success"
     [class]="className"

@@ -4,6 +4,8 @@ import { ShortinfoComponent } from '../shortinfo/shortinfo.component';
 import { RequestService } from '../../../../core/services/request.service';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { getAvatarGradient } from '../../../../core/utils/color-utils';
+import { getInitial } from '../../../../core/utils/string-utils';
 
 @Component({
   selector: 'app-profile-menu',
@@ -12,6 +14,9 @@ import { jwtDecode } from 'jwt-decode';
   styleUrl: './profile-menu.component.scss'
 })
 export class ProfileMenuComponent {
+
+  getAvatarGradient = getAvatarGradient;
+  getInitial = getInitial;
 
   @Input() actualTab: string = '';
   @Input() className: string = '';
