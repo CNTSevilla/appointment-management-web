@@ -38,6 +38,8 @@ export class HistoryComponent {
       name: 'helper',
       label: 'Usuario asignado',
       type: 'select',
+      withUserImage: true,
+      userType: 'helper',
       options: [
         { value: 'es', label: 'Alexis' },
         { value: 'mx', label: 'Ruben' },
@@ -48,6 +50,8 @@ export class HistoryComponent {
       name: 'person_in_need',
       label: 'Persona que necesita ayuda',
       type: 'select',
+      withUserImage: true,
+      userType: 'person_in_need',
       options: [
         { value: 'es', label: 'Persona1' },
         { value: 'mx', label: 'Persona2' },

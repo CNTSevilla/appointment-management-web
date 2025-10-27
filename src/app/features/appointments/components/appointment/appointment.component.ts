@@ -19,7 +19,7 @@ export class AppointmentComponent {
   constructor(private router: Router ) {}
 
   toastData: ToastData | null = null;
-  addButton = 'Añadir cita';
+  addButton = 'Filtrar citas';
   backButton = '';
   appointmentEndpoint = '/appointment';
   isLoading = false;
@@ -27,7 +27,7 @@ export class AppointmentComponent {
   appointmentsFields: FormField[] = [
     {
       name: 'date_time',
-      label: 'Fecha y hora',
+      label: 'Fecha',
       type: 'datetime-local',
       required: true,
     },
@@ -89,7 +89,7 @@ export class AppointmentComponent {
   filterFields: FormField[] = [
     {
       name: 'date_time',
-      label: 'Fecha y hora',
+      label: 'Fecha',
       type: 'datetime-local',
       required: true,
     },
@@ -121,11 +121,13 @@ export class AppointmentComponent {
       label: 'Ayudante asignado',
       type: 'select',
       required: true,
+      withUserImage: true,
+      userType: 'helper',
       options: [
-        { value: 'ACTIVE', label: 'Alexis' },
-        { value: 'ARCHIVED', label: 'Jesús' },
-        { value: 'COMPLETED', label: 'Rubén' },
-        { value: 'DEFERRED', label: 'Angel' },
+        { value: '1', label: 'Alexis' },
+        { value: '2', label: 'Jesús' },
+        { value: '3', label: 'Rubén' },
+        { value: '4', label: 'Angel' },
       ],
     },
     {
@@ -133,11 +135,13 @@ export class AppointmentComponent {
       label: 'Persona necesitada',
       type: 'select',
       required: true,
+      withUserImage: true,
+      userType: 'person_in_need',
       options: [
-        { value: 'ACTIVE', label: 'Persona1' },
-        { value: 'ARCHIVED', label: 'Persona2' },
-        { value: 'COMPLETED', label: 'Persona3' },
-        { value: 'DEFERRED', label: 'Persona4' },
+        { value: '1', label: 'Persona1' },
+        { value: '2', label: 'Persona2' },
+        { value: '3', label: 'Persona3' },
+        { value: '4', label: 'Persona4' },
       ],
     }
   ];
