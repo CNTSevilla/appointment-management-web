@@ -32,19 +32,56 @@
 
       @if (helperUsers.length > 0) {
       <!-- Tabla de usuarios internos -->
-      <div class="overflow-x-auto p-6 rounded-xl bg-white">
+      <div class="overflow-x-auto overflow-y-visible p-6 rounded-xl bg-white">
         <table class="min-w-full divide-y-2 divide-gray-200">
           <thead class="ltr:text-left rtl:text-right">
             <tr class="*:font-medium *:text-gray-900">
-              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Nombre</th>
-              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Email</th>
-              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Nombre de usuario</th>
-              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Teléfono</th>
-              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Fecha de creación</th>
-              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Rol</th>
-              <th class="px-3 py-2 whitespace-nowrap cursor-pointer">Acciones</th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer"
+                (click)="onSortHelper('name')">
+                Nombre
+                <span *ngIf="helperSortField === 'name'">
+                  {{ helperSortDirection === 'asc' ? '↑' : '↓' }}
+                </span>
+              </th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer"
+                (click)="onSortHelper('email')">
+                Email
+                <span *ngIf="helperSortField === 'email'">
+                  {{ helperSortDirection === 'asc' ? '↑' : '↓' }}
+                </span>
+              </th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer"
+                (click)="onSortHelper('username')">
+                Nombre de usuario
+                <span *ngIf="helperSortField === 'username'">
+                  {{ helperSortDirection === 'asc' ? '↑' : '↓' }}
+                </span>
+              </th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer"
+                (click)="onSortHelper('phone')">
+                Teléfono
+                <span *ngIf="helperSortField === 'phone'">
+                  {{ helperSortDirection === 'asc' ? '↑' : '↓' }}
+                </span>
+              </th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer"
+                (click)="onSortHelper('createdAt')">
+                Fecha de creación
+                <span *ngIf="helperSortField === 'createdAt'">
+                  {{ helperSortDirection === 'asc' ? '↑' : '↓' }}
+                </span>
+              </th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer"
+                (click)="onSortHelper('role')">
+                Rol
+                <span *ngIf="helperSortField === 'role'">
+                  {{ helperSortDirection === 'asc' ? '↑' : '↓' }}
+                </span>
+              </th>
+              <th class="px-3 py-2 whitespace-nowrap">Acciones</th>
             </tr>
           </thead>
+
 
           <tbody class="divide-y divide-gray-200">
             @for (user of helperUsers; track user; let i = $index) {
@@ -197,16 +234,35 @@
 
       @if (personsInNeed.length > 0) {
       <!-- Tabla de personas necesitadas -->
-      <div class="overflow-x-auto p-6 rounded-xl bg-white">
+      <div class="overflow-x-auto overflow-y-visible p-6 rounded-xl bg-white">
         <table class="min-w-full divide-y-2 divide-gray-200">
           <thead class="ltr:text-left rtl:text-right">
             <tr class="*:font-medium *:text-gray-900">
-              <th class="px-3 py-2 whitespace-nowrap">Nombre</th>
-              <th class="px-3 py-2 whitespace-nowrap">Email</th>
-              <th class="px-3 py-2 whitespace-nowrap">Teléfono</th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer"
+                (click)="onSortPerson('name')">
+                Nombre
+                <span *ngIf="personsSortField === 'name'">
+                  {{ personsSortDirection === 'asc' ? '↑' : '↓' }}
+                </span>
+              </th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer"
+                (click)="onSortPerson('email')">
+                Email
+                <span *ngIf="personsSortField === 'email'">
+                  {{ personsSortDirection === 'asc' ? '↑' : '↓' }}
+                </span>
+              </th>
+              <th class="px-3 py-2 whitespace-nowrap cursor-pointer"
+                (click)="onSortPerson('phone')">
+                Teléfono
+                <span *ngIf="personsSortField === 'phone'">
+                  {{ personsSortDirection === 'asc' ? '↑' : '↓' }}
+                </span>
+              </th>
               <th class="px-3 py-2 whitespace-nowrap">Acciones</th>
             </tr>
           </thead>
+
 
           <tbody class="divide-y divide-gray-200">
             @for (person of personsInNeed; track person; let i = $index) {
@@ -219,7 +275,6 @@
                 </div>
                 {{ person.name }}
               </td>
-              <td class="px-3 py-2 whitespace-nowrap">{{ person.name }}</td>
               <td class="px-3 py-2 whitespace-nowrap">{{ person.email }}</td>
               <td class="px-3 py-2 whitespace-nowrap">{{ person.phone }}</td>
 
@@ -421,7 +476,7 @@
     <app-dynamic-form [titleForm]="helperUserFormTitle"
       [subtitleForm]="helperUserFormSubtitle"
       [fields]="helperUserFormFields" [className]="'w-full'"
-      [endpointUrl]="helperUserEndpoint" [method]="'POST'"
+      [endpointUrl]="createHelperUserEndpoint" [method]="'POST'"
       [backButton]="backButtonText" [submitButton]="addHelperUserButtonText"
       (submitSuccess)="onHelperUserSubmitSuccess($event)"
       (submitError)="onFormError($event)" (loading)="setLoading($event)">

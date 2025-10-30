@@ -167,6 +167,7 @@ export class UserListComponent {
 
   /** Endpoint para usuarios internos */
   public readonly helperUserEndpoint = '/helper';
+  public readonly createHelperUserEndpoint = '/authentication/sign-up';
 
   /** Indica si el popup de confirmación está abierto */
   public isPopupOpen = false;
@@ -177,11 +178,18 @@ export class UserListComponent {
     { name: 'email', label: 'Correo electrónico', type: 'email', placeholder: 'example@gmail.com', required: true },
     { name: 'username', label: 'Nombre de usuario', type: 'text', placeholder: 'jesus.perez', required: true },
     { name: 'phone', label: 'Nº de teléfono', type: 'tel', placeholder: '000 000 000', required: true },
-    { name: 'clearPassword', label: 'Contraseña', type: 'password', placeholder: '********', required: true, min: 6 }
+    { name: 'password', label: 'Contraseña', type: 'password', placeholder: '********', required: true, min: 6 }
   ];
 
   /** Estado de los dropdowns para personas necesitadas */
   public userInfo: UserJWT = {};
+
+  public helperSortField: string = 'createdAt';
+  public helperSortDirection: 'asc' | 'desc' = 'desc';
+
+  public personsSortField: string = 'name';
+  public personsSortDirection: 'asc' | 'desc' = 'desc';
+
 
   constructor(public router : Router) {
     const token = sessionStorage.getItem('token');
@@ -210,12 +218,15 @@ export class UserListComponent {
    * @param personsPagination Paginación para personas necesitadas
    */
   private loadUsers(helperPagination: Pagination, personsPagination: Pagination): void {
+    const helperSort = `&sortField=${this.helperSortField}&sortDirection=${this.helperSortDirection}`;
+    const personsSort = `&sortField=${this.personsSortField}&sortDirection=${this.personsSortDirection}`;
+
     forkJoin({
       helperUsers: this.requestService.get<GETPaginationHelper>(
-        `${this.helperUsersEndpoint}?page=${helperPagination.page}&size=${helperPagination.size}`
+        `${this.helperUsersEndpoint}?page=${helperPagination.page}&size=${helperPagination.size}${helperSort}`
       ),
       personsInNeed: this.requestService.get<GETPaginationPIN>(
-        `${this.personsInNeedEndpoint}?page=${personsPagination.page}&size=${personsPagination.size}`
+        `${this.personsInNeedEndpoint}?page=${personsPagination.page}&size=${personsPagination.size}${personsSort}`
       )
     }).subscribe({
       next: ({ helperUsers, personsInNeed }) => {
@@ -259,6 +270,32 @@ export class UserListComponent {
       }
     });
   }
+
+  public onSortHelper(column: string): void {
+    if (this.helperSortField === column) {
+      this.helperSortDirection = this.helperSortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.helperSortField = column;
+      this.helperSortDirection = 'asc';
+    }
+
+    this.helperUsersPagination.page = 0;
+    this.loadUsers(this.helperUsersPagination, this.personsInNeedPagination);
+  }
+
+  public onSortPerson(column: string): void {
+    if (this.personsSortField === column) {
+      this.personsSortDirection = this.personsSortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.personsSortField = column;
+      this.personsSortDirection = 'asc';
+    }
+
+    this.personsInNeedPagination.page = 0;
+    this.loadUsers(this.helperUsersPagination, this.personsInNeedPagination);
+  }
+
+
 
   /**
    * Maneja el éxito al enviar el formulario de filtrado.
@@ -320,8 +357,14 @@ export class UserListComponent {
    * @param error Error recibido
    */
   public onFormError(error: any): void {
+    let msg = error.status === 409 ? 'Ya existe un usuario interno con este email o este nombre de usuario' : 'Error al procesar el formulario. Por favor, inténtelo de nuevo.' ;
+
     console.error('Error en el formulario:', error);
-    this.showErrorToast('Error al procesar el formulario. Por favor, inténtelo de nuevo.');
+    this.resetHelperUserForm();
+    this.isHelperUserFormOpen = false;
+
+    this.showErrorToast(msg);
+
   }
 
   /**
@@ -432,6 +475,7 @@ export class UserListComponent {
     this.personInNeedFormSubtitle = 'Rellena los datos para añadir la persona necesitada';
     this.personInNeedHttpMethod = 'POST';
     this.resetPersonInNeedForm();
+    this.personInNeedEndpoint = '/person_in_need';
     this.isPersonInNeedFormOpen = !this.isPersonInNeedFormOpen;
   }
 
