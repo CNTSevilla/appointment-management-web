@@ -20,7 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // 🚫 Excluir endpoints públicos (login / register, etc.)
-    if (req.url.includes('/sign-in') || req.url.includes('/auth/register')) {
+    if (req.url.includes('/sign-in') || req.url.includes('/sign-up')  || req.url.includes('/auth/register')) {
       return next.handle(req);
     }
 
