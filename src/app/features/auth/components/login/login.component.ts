@@ -127,6 +127,9 @@ export class LoginComponent {
 
   onLoginError(error: any): void {
     console.error('Error en el login:', error);
+    let text = "";
+    text = error.status === 409 ? 'Su nombre de usuario o email ya está en uso por otro usuario.' : 'Error en el inicio de sesión. Por favor, inténtelo de nuevo.';
+
     // 1. Mostrar un mensaje de error al usuario
     this.toastData = { type: 'error', text: 'Error en el inicio de sesión. Por favor, inténtelo de nuevo.', duration: 5000 };
 
