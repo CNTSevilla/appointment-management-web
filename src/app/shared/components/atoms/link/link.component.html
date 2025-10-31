@@ -1,0 +1,14 @@
+@if (icon == "" || icon == null) {
+  <div class="">
+    <a [href]="url" [class]="className" [target]="target" [rel]="rel" class="transtion .2s ease font-semibold text-gray-900 hover:text-red-500">{{text}}</a>
+  </div>
+} @else {
+  <div
+    [routerLink]="[url]"
+    [class]="className"
+    class="flex items-center p-2 text-gray-700 transition-all .2s ease cursor-pointer rounded-lg dark:text-white hover:bg-rose-100 hover:text-white dark:hover:bg-gray-700 group">
+    <app-icon [icon]="icon"></app-icon>
+    <span class="flex-1 ms-3 whitespace-nowrap">{{ text}}</span>
+  </div>
+
+}

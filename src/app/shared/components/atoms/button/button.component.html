@@ -1,0 +1,17 @@
+<button
+  [attr.type]="type"
+  [attr.name]="name || null"
+  [attr.value]="value || null"
+  [attr.id]="id || null"
+  [attr.aria-label]="ariaLabel || null"
+  [attr.form]="form || null"
+  [attr.autofocus]="autofocus ? true : null"
+  [disabled]="disabled"
+  [ngClass]="className"
+  class="btn disabled:opacity-30 disabled:pointer-events-none transition-all .2s ease flex justify-center items-center gap-2 .2s ease cursor-pointer rounded-md bg-rose-500 text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600"
+>
+  @if (icon != "" && icon != null) {
+    <app-icon [icon]="icon"></app-icon>
+  }
+  <span class="z-1">{{ text }}</span>
+</button>

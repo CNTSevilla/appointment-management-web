@@ -1,0 +1,221 @@
+<div [formGroup]="form" class="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+  <!-- Campo dinámico -->
+  <div class="sm:col-span-6">
+    @if (field.label != "" && field.type != null) {
+      <label [for]="field.name" class="block text-md font-medium text-gray-900">
+        {{ field.label }} @if (field.required){ <span class="text-red-500">*</span> }
+      </label>
+    }
+
+    <div class="mt-2">
+      <!-- Tipos simples de input -->
+      @if (['text','email','password','number','time', 'tel'].includes(field.type)) {
+
+        <input [type]="field.type"
+                [id]="field.name"
+                [value]="field.value || ''"
+                [formControlName]="field.name"
+                [placeholder]="field.placeholder"
+                [minLength]="field.min  || 0"
+                [maxLength]="field.max || 10000"
+                [step]="field.step"
+                class="transition-all .2s ease includes w-full rounded-md bg-white px-4 py-[12px] min-h-[55px] text-md text-gray-900 outline-2 -outline-offset-2 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-md/6" />
+      }
+
+      @if (field.type === 'date' || field.type === 'datetime-local') {
+        <!-- Aquí podrías agregar un datepicker si es necesario -->
+        <section class="relative bg-white">
+          <div class="container mx-auto">
+            <div class="mx-auto w-full max-w-[510px]">
+              <!-- Input -->
+              <div class="relative">
+                <input
+                  id="datepicker"
+                  type="text"
+                  placeholder="Selecciona un rango de fechas"
+                  class="min-h-[55px] transition-all .3s ease cursor-pointer w-full rounded-md border-[2px] border-gray-300 bg-white pl-12 pr-4 text-gray-900 outline-none hover:border-red-500 focus:border-rose-500"
+                  [value]="control?.value || ''"
+                  readonly
+                  (click)="toggleCalendar()"
+                />
+
+                <span
+                  (click)="toggleCalendar()"
+                  class="min-h-[53px] absolute inset-y-0 left-0 flex h-12 w-12 items-center justify-center text-gray-400 cursor-pointer"
+                >
+                  <svg
+                    width="21"
+                    height="20"
+                    viewBox="0 0 21 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M18 3.3125H16.3125V2.625C16.3125 2.25 16 1.90625 15.5937 1.90625C15.1875 1.90625 14.875 2.21875 14.875 2.625V3.28125H6.09375V2.625C6.09375 2.25 5.78125 1.90625 5.375 1.90625C4.96875 1.90625 4.65625 2.21875 4.65625 2.625V3.28125H3C1.9375 3.28125 1.03125 4.15625 1.03125 5.25V16.125C1.03125 17.1875 1.90625 18.0938 3 18.0938H18C19.0625 18.0938 19.9687 17.2187 19.9687 16.125V5.25C19.9687 4.1875 19.0625 3.3125 18 3.3125ZM3 4.71875H4.6875V5.34375C4.6875 5.71875 5 6.0625 5.40625 6.0625C5.8125 6.0625 6.125 5.75 6.125 5.34375V4.71875H14.9687V5.34375C14.9687 5.71875 15.2812 6.0625 15.6875 6.0625C16.0937 6.0625 16.4062 5.75 16.4062 5.34375V4.71875H18C18.3125 4.71875 18.5625 4.96875 18.5625 5.28125V7.34375H2.46875V5.28125C2.46875 4.9375 2.6875 4.71875 3 4.71875ZM18 16.6562H3C2.6875 16.6562 2.4375 16.4062 2.4375 16.0937V8.71875H18.5312V16.125C18.5625 16.4375 18.3125 16.6562 18 16.6562Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+              </div>
+
+              <!-- Calendar -->
+              <div
+                *ngIf="isCalendarOpen"
+                class="absolute top-14 z-10 flex min-w-sm w-full flex-col rounded-xl bg-gray-50 p-4 shadow-lg sm:p-6 border border-gray-200"
+              >
+                <!-- Header -->
+                <div class="flex items-center justify-between pb-4">
+                  <button
+                    class="cursor-pointer flex h-[38px] w-[38px] items-center justify-center rounded-md border border-gray-300 bg-gray-100 text-gray-700 hover:bg-rose-500 hover:text-white sm:h-[46px] sm:w-[46px]"
+                    (click)="prevMonth()"
+                  >
+                    ‹
+                  </button>
+
+                  <span class="text-lg font-medium capitalize text-gray-900">
+                    {{ currentDate | date: 'MMMM yyyy' }}
+                  </span>
+
+                  <button
+                    class="cursor-pointer flex h-[38px] w-[38px] items-center justify-center rounded-md border border-gray-300 bg-gray-100 text-gray-700 hover:bg-rose-500 hover:text-white sm:h-[46px] sm:w-[46px]"
+                    (click)="nextMonth()"
+                  >
+                    ›
+                  </button>
+                </div>
+
+                <!-- Weekdays -->
+                <div
+                  class="grid grid-cols-7 text-center pb-2 pt-4 text-sm font-medium text-gray-500 sm:text-base"
+                >
+                  <span
+                    *ngFor="let day of weekDays"
+                    class="flex h-[38px] w-[38px] items-center justify-center sm:h-[46px] sm:w-[47px]"
+                  >
+                    {{ day }}
+                  </span>
+                </div>
+
+                <!-- Days -->
+                <div
+                  class="grid grid-cols-7 text-center text-sm font-medium sm:text-base"
+                >
+                  <ng-container *ngFor="let d of calendarDays">
+                    <div
+                      class="flex h-[38px] w-[38px] items-center justify-center rounded-md mb-2 cursor-pointer transition-colors"
+                      [ngClass]="{
+                        'bg-rose-600 text-white':
+                          d.full && (selectedStartDate === d.full || selectedEndDate === d.full),
+                        'bg-rose-100 text-gray-800':
+                          d.full && isInRange(d.full),
+                        'text-gray-700 hover:bg-gray-200':
+                          !isInRange(d.full) && !(selectedStartDate === d.full || selectedEndDate === d.full)
+                      }"
+                      (click)="selectDate(d)"
+                    >
+                      {{ d.day || '' }}
+                    </div>
+                  </ng-container>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex items-center space-x-3 pt-4 sm:space-x-5">
+                  <button
+                    class="cursor-pointer flex h-[45px] w-full items-center justify-center rounded-md bg-gray-200 text-base font-medium text-gray-800 hover:bg-gray-300 transition-colors"
+                    (click)="cancel()"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    class="cursor-pointer flex h-[45px] w-full items-center justify-center rounded-md bg-rose-600 text-base font-medium text-white hover:bg-rose-700 transition-colors"
+                    (click)="apply()"
+                  >
+                    Aplicar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      }
+
+      <!-- Textarea -->
+      @if (field.type === 'textarea') {
+        <textarea rows="3"
+                  [id]="field.name"
+                  [value]="field.value || ''"
+                  [formControlName]="field.name"
+                  [placeholder]="field.placeholder"
+                  class="transition-all .2s ease block w-full rounded-md bg-white px-4 py-2 text-md text-gray-900 outline-2 -outline-offset-2 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-md/6">
+        </textarea>
+      }
+
+      <!-- Select -->
+      @if (field.type === 'select') {
+        <app-custom-select
+          [options]="field.options  ?? []"
+          [placeholder]="field.placeholder || 'Selecciona una opción'"
+          [userType]="field.userType || null"
+          formControlName="{{ field.name }}">
+        </app-custom-select>
+
+      }
+
+      <!-- Checkbox -->
+      @if (field.type === 'checkbox') {
+        <div class="flex items-center gap-x-2">
+          <input type="checkbox"
+                  [id]="field.name"
+                  [formControlName]="field.name"
+                  class="cursor-pointer h-5 w-5 accent-rose-600 transition-all .2s ease rounded-sm border border-gray-300 text-rose-600 focus:ring-rose-600" />
+          <label [for]="field.name" class="text-[15px] text-gray-700 cursor-pointer">{{ field.label }}</label>
+        </div>
+      }
+
+      <!-- Radio -->
+      @if (field.type === 'radio') {
+        <div class="space-y-2">
+          @for (option of field.options; track option.value) {
+            <div class="flex items-center gap-x-2">
+              <input type="radio"
+                      [name]="field.name"
+                      [value]="option.value"
+                      [formControlName]="field.name"
+                      [id]="field.name + '_' + option.value"
+                      class="cursor-pointer h-5 w-5 accent-rose-600 transition-all .2s ease h-4 w-4 text-rose-600 border-gray-300 focus:ring-rose-600" />
+              <label [for]="field.name + '_' + option.value" class="cursor-pointer text-[15px] text-gray-700">
+                {{ option.label }}
+              </label>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- File -->
+      @if (field.type === 'file') {
+        <input type="file"
+                [id]="field.name"
+                [formControlName]="field.name"
+                [multiple]="field.multiple"
+                class="cursor-pointer transition-all .2s ease block w-full text-md text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-md file:font-semibold file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100" />
+      }
+
+      <!-- Mensaje de error -->
+      @if (form.get(field.name)?.invalid && form.get(field.name)?.touched && !isFilterForm) {
+        <div class="text-red-600 mt-1 text-md transition-all .2s ease">
+          <!-- #AÑADIR ICONOS PARA ERROR Y AÑADIR MENSAJE DE INFORMACIÓN DEBAJO DEL CAMPO -->
+          <span *ngIf="form.get(field.name)?.errors?.['required']">Este campo es obligatorio.</span>
+          <span *ngIf="form.get(field.name)?.errors?.['email']">Correo no válido.</span>
+          <span *ngIf="form.get(field.name)?.errors?.['minlength']">Debe contener al menos {{ field.min }} caracteres</span>
+          <span *ngIf="form.get(field.name)?.errors?.['maxlength']">No puede contener más de {{ field.max }} caracteres</span>
+          <span *ngIf="form.get(field.name)?.errors?.['pattern'] && field.type === 'tel'">
+            Número no válido. Usa un formato como +34 600 123 456
+          </span>
+        </div>
+      }
+    </div>
+  </div>
+
+</div>
+

@@ -1,0 +1,15 @@
+<div [class]="className" class="px-4 py-3 flex flex-col" role="none">
+  <p class="text-md text-gray-900 font-bold text-center dark:text-white" role="none">
+    {{ name }}
+  </p>
+  <span
+  class="text-center mt-3 mb-0 mx-auto"
+  [ngClass]="
+    roles === 'ADMIN' ? 'inline-flex items-center rounded-md bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 inset-ring inset-ring-red-400/20' :
+    roles === 'SYSTEM' ? 'inline-flex items-center rounded-md bg-yellow-400/10 px-2 py-1 text-xs font-medium text-yellow-500 inset-ring inset-ring-yellow-400/20' :
+    roles === 'USER' ? 'inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 inset-ring inset-ring-gray-400/20' :
+    'inline-flex items-center rounded-md bg-gray-200 px-2 py-1 text-xs font-medium text-gray-600'
+  ">{{roles}}</span>
+</div>
+
+<hr class="mx-5 mt-1 border-t border-gray-100 dark:border-gray-600" />
