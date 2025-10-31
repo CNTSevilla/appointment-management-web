@@ -1,12 +1,31 @@
-FROM node:lts-slim AS build
+# Stage 1: Build the Angular application
+FROM node:18-alpine AS build
 
-WORKDIR /src
+WORKDIR /app
 
+# Copy package files
 COPY package*.json ./
-RUN npm install
 
+# Install dependencies
+RUN npm ci
+
+# Copy source code
 COPY . .
 
-EXPOSE 4200
+# Build the application for production
+RUN npm run build
 
-CMD ["npm", "start"]
+# Stage 2: Serve with Nginx
+FROM nginx:alpine
+
+# Copy custom nginx configuration (optional)
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy built application from build stage
+COPY --from=build /app/dist/cntappointment/browser /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
